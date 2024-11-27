@@ -44,8 +44,10 @@ public class Security {
         http.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                     authorizationManagerRequestMatcherRegistry
                             .anyRequest()
-                            .permitAll()
-        ).csrf(AbstractHttpConfigurer::disable);
+                            .permitAll())
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
+        ;
         http.formLogin(form -> {
             form.loginPage("/login");
             form.defaultSuccessUrl("/admin");

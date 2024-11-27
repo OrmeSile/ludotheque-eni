@@ -1,6 +1,6 @@
-package dev.orme.ludotheque.data.POJO;
+package dev.orme.ludotheque.data.entity;
 
-import dev.orme.ludotheque.data.entity.User;
+import dev.orme.ludotheque.data.POJO.RoleType;
 import jakarta.persistence.*;
 
 @Entity
@@ -9,29 +9,26 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-
-    private Roles role;
-
+    private RoleType role;
     @ManyToOne
-    @JoinColumn
     private User user;
 
     public Role(){}
 
-    public Role(Roles role, User user) {
+    public Role(RoleType role) {
         this.role = role;
-        this.user = user;
     }
 
-    public Role(Roles role) {
+    public Role(RoleType role, User user) {
         this.role = role;
+        this.user = user;
     }
 
     public String getId() {
         return id;
     }
 
-    public Roles getName() {
+    public RoleType getName() {
         return role;
     }
 

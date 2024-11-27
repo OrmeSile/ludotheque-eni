@@ -1,7 +1,9 @@
 plugins {
     id 'java'
+    id 'idea'
     id 'org.springframework.boot' version '3.4.0'
     id 'io.spring.dependency-management' version '1.1.6'
+    id 'com.google.protobuf' version '0.9.4'
 }
 
 group = 'dev.orme'
@@ -17,7 +19,44 @@ repositories {
     mavenCentral()
 }
 
+def grpcVersion = '1.68.1' // CURRENT_GRPC_VERSION
+
+protobuf {
+    protoc {
+        artifact  = 'com.google.protobuf:protoc:4.28.2'
+        generateProtoTasks {
+            ofSourceSet('main')
+        }
+        java {}
+    }
+    plugins {
+        grpc { artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}" }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {
+                option '@generated=omit'
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'build/generated/source/proto/main/grpc'
+            srcDirs 'build/generated/source/proto/main/java'
+        }
+    }
+}
+
 dependencies {
+    implementation 'com.google.code.gson:gson'
+    implementation "io.grpc:grpc-netty-shaded:${grpcVersion}"
+    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+    implementation "io.grpc:grpc-services:${grpcVersion}"
+    implementation "io.grpc:grpc-stub:${grpcVersion}"
+    implementation 'com.google.protobuf:protobuf-java:4.28.2'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'

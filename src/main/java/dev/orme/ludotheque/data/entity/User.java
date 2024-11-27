@@ -1,7 +1,6 @@
 package dev.orme.ludotheque.data.entity;
 
-import dev.orme.ludotheque.data.POJO.Role;
-import dev.orme.ludotheque.data.POJO.Roles;
+import dev.orme.ludotheque.data.POJO.RoleType;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.id = id;
-        this.roles.add(new Role(Roles.ROLE_USER));
+        this.roles.add(new Role(RoleType.ROLE_USER));
     }
 
     public User(String username, String password, String id, List<Role> roles) {
@@ -42,7 +41,7 @@ public class User {
         this.password = password;
         this.id = id;
         if(roles == null) {
-            var defaultRole = new Role(Roles.ROLE_USER);
+            var defaultRole = new Role(RoleType.ROLE_USER);
             this.roles.add(defaultRole);
         }else {
             this.roles = roles;
@@ -52,7 +51,7 @@ public class User {
     public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.roles.add(new Role(Roles.ROLE_USER));
+        this.roles.add(new Role(RoleType.ROLE_USER));
     }
 
     public String getId() {
