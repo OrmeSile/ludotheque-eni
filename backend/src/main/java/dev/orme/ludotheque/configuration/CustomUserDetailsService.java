@@ -3,6 +3,7 @@ package dev.orme.ludotheque.configuration;
 import dev.orme.ludotheque.data.POJO.SecurityUser;
 import dev.orme.ludotheque.data.entity.User;
 import dev.orme.ludotheque.data.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

@@ -1,7 +1,6 @@
 package dev.orme.ludotheque.util;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.crypto.SecretKey;
