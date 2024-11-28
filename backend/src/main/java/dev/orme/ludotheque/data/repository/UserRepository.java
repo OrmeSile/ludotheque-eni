@@ -11,5 +11,5 @@ import java.util.UUID;
 public interface UserRepository extends CrudRepository<User, UUID> {
     public User findByUsername(String username);
 
-    public User getFirstById(String id);
+    public User getFirstById(UUID id);
 }

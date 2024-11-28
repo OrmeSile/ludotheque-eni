@@ -16,7 +16,7 @@ build/
 .springBeans
 .sts4-cache
 bin/
-!**/src/main/**/bin/
+!**/src/main/**/bin/e
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
@@ -40,3 +40,4 @@ out/
 
 ### Dev Secrets ###
 secrets.properties
+/backend/.gradle/

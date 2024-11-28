@@ -1,31 +1,32 @@
 package dev.orme.ludotheque.util;
 
-import io.jsonwebtoken.Jwts;
-import org.springframework.beans.factory.annotation.Value;
+import io.micrometer.common.lang.NonNull;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 
-import javax.crypto.SecretKey;
-import java.util.Date;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class JwtHandler {
-    @Value("jwt.key")
-    private static SecretKey jwtKey;
-    @Value("jwt.expiration.time")
-    private static long expirationTime;
+public class JwtHandler implements Converter<org.springframework.security.oauth2.jwt.Jwt, AbstractAuthenticationToken> {
 
-    public static String generateToken(String username) {
-        return Jwts.builder()
-                .subject(username)
-                .expiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(jwtKey)
-                .compact();
+    @Override
+    public AbstractAuthenticationToken convert(@NonNull Jwt source) {
+        return new JwtAuthenticationToken(source, Stream.concat(new JwtGrantedAuthoritiesConverter().convert(source).stream(), extractResourceRoles(source).stream()).collect(Collectors.toSet()));
     }
 
-    public static String extractUsername(String token) {
-        return Jwts.parser()
-                .verifyWith(jwtKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
+    private Collection<? extends GrantedAuthority> extractResourceRoles(Jwt source) {
+        var resourceAccess = new HashMap<>(source.getClaim("resource_access"));
+        @SuppressWarnings("unchecked") var ludotheque = (Map<String, List<String>>) resourceAccess.get("ludotheque");
+        var roles = (ArrayList<String>) ludotheque.get("roles");
+
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(String.format("ROLE_%s", role.replace("-", "_"))))
+                .collect(Collectors.toSet());
     }
 }

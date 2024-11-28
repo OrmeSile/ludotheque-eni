@@ -21,7 +21,7 @@ public class UserService implements DtoConvertable<User, UserDTO> {
     }
 
     public UserDTO getUserById(String id){
-        var user = userRepository.findById(id).orElse(null);
+        var user = userRepository.findById(UUID.fromString(id)).orElse(null);
         if(user == null) return null;
         return toDto(user);
     }

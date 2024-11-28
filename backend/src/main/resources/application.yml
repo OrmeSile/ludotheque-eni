@@ -1,0 +1,30 @@
+server:
+  port: 8081
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: "http://localhost:8080/realms/ludotheque"
+          jwk-set-uri: "http://localhost:8080/realms/ludotheque/.well-known/openid-configuration"
+  application:
+    name: "ludotheque"
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/postgres"
+    username: "postgres"
+    password: "postgres"
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 5
+  jpa:
+    hibernate:
+      ddl-auto: create
+  mvc:
+    converters:
+      preferred-json-mapper: gson
+  gson:
+    enable-complex-map-key-serialization: true
+    serialize-nulls: true
+logging:
+  level:
+    root: debug
