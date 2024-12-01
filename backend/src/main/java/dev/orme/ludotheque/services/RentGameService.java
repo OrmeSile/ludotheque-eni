@@ -21,28 +21,4 @@ public class RentGameService {
         this.gameRepository = gameRepository;
         this.rentInformationRepository = rentInformationRepository;
     }
-
-    public ServiceResponse<RentInformation> rentGame(UUID userId, UUID gameId){
-        var user = userRepository.findById(userId);
-        if(user.isEmpty())
-            return new ServiceResponse<>(ResponseStatus.ERROR, null, "User does not exist.");
-        if(!user.get().isActive())
-            return new ServiceResponse<>(ResponseStatus.ERROR, null, "User is not active.");
-        var game = gameRepository.findById(gameId);
-        if(game.isEmpty())
-            return new ServiceResponse<>(ResponseStatus.ERROR, null, "Game does not exist.");
-        if(!game.get().isActive())
-            return new ServiceResponse<>(ResponseStatus.ERROR, null, "Game is not active.");
-
-        var rentInformation = new RentInformation(
-                null,
-                0,
-                game.get().getMaxRentDays(),
-                ZonedDateTime.now(),
-                game.get(),
-                game.get().getGamePrice()
-                );
-        var savedRentInformation = rentInformationRepository.save(rentInformation);
-        return new ServiceResponse<>(ResponseStatus.OK, savedRentInformation, null);
-    }
 }
