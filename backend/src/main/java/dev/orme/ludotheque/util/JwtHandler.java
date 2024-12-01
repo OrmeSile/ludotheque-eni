@@ -22,11 +22,13 @@ public class JwtHandler implements Converter<org.springframework.security.oauth2
 
     private Collection<? extends GrantedAuthority> extractResourceRoles(Jwt source) {
         var resourceAccess = new HashMap<>(source.getClaim("resource_access"));
-        @SuppressWarnings("unchecked") var ludotheque = (Map<String, List<String>>) resourceAccess.get("ludotheque");
+        @SuppressWarnings("unchecked") var ludotheque = (Map<String, List<String>>) resourceAccess.get(
+                "ludotheque-client");
         var roles = (ArrayList<String>) ludotheque.get("roles");
 
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(String.format("ROLE_%s", role.replace("-", "_"))))
+                .map(role -> new SimpleGrantedAuthority(String.format("ROLE_%s",
+                        role.replace("-", "_").toUpperCase(Locale.ROOT))))
                 .collect(Collectors.toSet());
     }
 }

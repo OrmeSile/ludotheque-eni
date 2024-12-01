@@ -4,8 +4,8 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-.gradle.properties
-.gradle-wrapper.properties
+gradle.properties
+gradle-wrapper.properties
 
 ### STS ###
 .apt_generated
@@ -41,3 +41,7 @@ out/
 ### Dev Secrets ###
 secrets.properties
 /backend/.gradle/
+
+### Keycloak ###
+!/authServer/bin
+/.log*

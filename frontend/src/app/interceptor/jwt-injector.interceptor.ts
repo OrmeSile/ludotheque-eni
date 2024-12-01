@@ -1,6 +1,6 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import {SecurityStore} from '../services/security-store.service';
 import {inject} from '@angular/core';
+import {SecurityStore} from '../shared/security/security-store.service';
 
 export const securityInterceptor: HttpInterceptorFn = (req, next) => {
   const keycloakService = inject(SecurityStore);

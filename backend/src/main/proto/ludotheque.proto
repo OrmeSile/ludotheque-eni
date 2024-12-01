@@ -1,26 +1,58 @@
+syntax = 'proto3';
 package ludotheque;
 
 option java_multiple_files = true;
 option java_package = "dev.orme.ludotheque";
 option java_outer_classname = "LudothequeProtos";
 
+message GameDTO {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  bool isRented = 4;
+  bool isActive = 5;
+  TimestampDTO timeOfCreation = 6;
+  string renterId = 7;
+  GamePriceDTO currentPrice = 8;
+  RentInformationDTO currentRentInformation = 9;
+  repeated GamePriceDTO prices = 10;
+  repeated RentInformationDTO rentInformations = 11;
+}
+
+message GamePriceDTO {
+  string id = 1;
+  string gameId = 2;
+  float price = 3;
+  TimestampDTO timeOfPriceSet = 4;
+}
+
+message RentInformationDTO {
+  string id = 1;
+  int32 daysRented = 2;
+  GamePriceDTO priceAtRentTime = 3;
+  int32 maxRentDaysAtRentTime = 4;
+  string gameId = 5;
+  string userId = 6;
+  TimestampDTO timestampOfRent = 7;
+  TimestampDTO timestampOfReturn = 8;
+}
+
 message UserDTO {
-  optional string id = 1;
-  optional string username = 2;
-  optional string password = 3;
-  repeated RoleDTO roles = 4;
+  string id = 1;
+  string username = 2;
+  string mail = 3;
+  bool isActive = 4;
 }
 
-message RoleDTO {
-  optional string id = 1;
-  optional RoleTypeDTO roletype = 2;
+message TimestampDTO {
+  int64 seconds = 1;
+  int64 nanos = 2;
+  string timezone = 3;
 }
 
-enum RoleTypeDTO {
-  ROLE_ADMIN = 0;
-  ROLE_CLERK = 1;
-  ROLE_USER = 2;
+message RentGameDto {
+  string userId = 1;
+  string gameId = 2;
 }
 
-message Empty{ }
-
+message Empty {}

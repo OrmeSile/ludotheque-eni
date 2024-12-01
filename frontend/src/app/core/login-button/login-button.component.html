@@ -1,0 +1,20 @@
+<div class="security">
+  @if (user(); as userValue) { @if (userValue.anonymous) {
+    <button
+      data-testid="btn-sign-in"
+      (click)="securityStore.signIn()"
+    >
+      Sign In
+    </button>
+  } @else {
+    <div class="flex items-center">
+      <p class="profile" data-testid="p-username">Welcome {{ userValue.name }}</p>
+      <button
+        (click)="securityStore.signOut()"
+        data-testid="btn-sign-out"
+      >
+        Sign Out
+      </button>
+    </div>
+  } }
+</div>

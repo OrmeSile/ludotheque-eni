@@ -1,20 +1,13 @@
-import {Component, inject, signal, WritableSignal} from '@angular/core';
+import {Component} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import {KeycloakService} from './services/keycloak.service';
+import {LoginButtonComponent} from './core/login-button/login-button.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, LoginButtonComponent, LoginButtonComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  result : WritableSignal<undefined | boolean | string>= signal(undefined)
-  title = 'frontend';
-  keycloakService = inject(KeycloakService)
-  async tryLogin(){
-    const loginResult = await this.keycloakService.tryLogin()
-
-    this.result.set(loginResult() as boolean | string)
-  }
+  title = "homepage"
 }
