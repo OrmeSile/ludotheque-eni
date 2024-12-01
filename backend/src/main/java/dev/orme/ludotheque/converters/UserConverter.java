@@ -9,6 +9,8 @@ public class UserConverter implements DtoConverter<User, UserDTO> {
 
     @Override
     public UserDTO toDto(User user) {
+        if (user == null) return null;
+
         UserDTO.Builder builder = UserDTO.newBuilder();
         builder.setId(user.getId().toString());
         builder.setUsername(user.getUsername());
@@ -17,6 +19,8 @@ public class UserConverter implements DtoConverter<User, UserDTO> {
 
     @Override
     public User fromDto(UserDTO userDTO) {
+        if (userDTO == null) return null;
+
         return new User(UUID.fromString(userDTO.getId()), userDTO.getUsername());
     }
 }

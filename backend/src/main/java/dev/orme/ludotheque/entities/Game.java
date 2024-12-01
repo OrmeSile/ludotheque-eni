@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.time.ZonedDateTime;
 import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.UUID;
 
 @Entity(name = "game")
@@ -15,12 +16,12 @@ public class Game {
 
     private String name;
     private String description;
-    private boolean isRented;
-    private boolean isActive;
+    private boolean isRented = false;
+    private boolean isActive = false;
     private ZonedDateTime timeOfCreation;
-    private int maxRentDays;
+    private int maxRentDays = 0;
 
-    @OneToOne(mappedBy = "game")
+    @ManyToOne()
     private User renter;
 
     @Transient
@@ -29,9 +30,10 @@ public class Game {
     private RentInformation currentRentInformation;
 
     @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
-    private SortedSet<GamePrice> prices;
+    private SortedSet<GamePrice> prices =  new TreeSet<>();
+
     @OneToMany(fetch = FetchType.LAZY)
-    private SortedSet<RentInformation> rentInformationEntities;
+    private SortedSet<RentInformation> rentInformations = new TreeSet<>();
 
     public Game() {
     }
@@ -44,7 +46,7 @@ public class Game {
         this.timeOfCreation = timeOfCreation;
         this.renter = renter;
         this.gamePrice = prices.isEmpty() ? null : prices.last();
-        this.currentRentInformation = prices.isEmpty() ? null : rentInformationEntities.first();
+        this.currentRentInformation = prices.isEmpty() ? null : rentInformations.first();
     }
 
     public Game(UUID id, String name, String description, boolean isRented, boolean isActive, ZonedDateTime timeOfCreation, User renter) {
@@ -56,15 +58,7 @@ public class Game {
         this.timeOfCreation = timeOfCreation;
         this.renter = renter;
         this.gamePrice = prices.isEmpty() ? null : prices.last();
-        this.currentRentInformation = prices.isEmpty() ? null : rentInformationEntities.first();
-    }
-
-    public SortedSet<RentInformation> getRentInformationEntities() {
-        return rentInformationEntities;
-    }
-
-    public void setRentInformationEntities(SortedSet<RentInformation> rentInformationEntities) {
-        this.rentInformationEntities = rentInformationEntities;
+        this.currentRentInformation = prices.isEmpty() ? null : rentInformations.first();
     }
 
     public int getMaxRentDays() {
@@ -156,10 +150,10 @@ public class Game {
     }
 
     public SortedSet<RentInformation> getRentInformations() {
-        return rentInformationEntities;
+        return rentInformations;
     }
 
-    public void setRentInformations(SortedSet<RentInformation> rentInformationEntities) {
-        this.rentInformationEntities = rentInformationEntities;
+    public void setRentInformations(SortedSet<RentInformation> rentInformations) {
+        this.rentInformations = rentInformations;
     }
 }

@@ -13,7 +13,7 @@ public class RentInformation implements Comparable<RentInformation> {
     private UUID id;
 
     private int daysRented = 0;
-    private int  maxRentDaysAtRentTime;
+    private int  maxRentDaysAtRentTime = 0;
     private ZonedDateTime timeOfRent;
     private ZonedDateTime timeOfReturn;
 

@@ -12,6 +12,8 @@ public class TimestampConverter implements DtoConverter<ZonedDateTime, Timestamp
 
     @Override
     public TimestampDTO toDto(ZonedDateTime zonedDateTime) {
+        if (zonedDateTime == null) return null;
+
         return TimestampDTO.newBuilder()
                 .setSeconds(zonedDateTime.getSecond())
                 .setNanos(zonedDateTime.getNano())
@@ -21,6 +23,8 @@ public class TimestampConverter implements DtoConverter<ZonedDateTime, Timestamp
 
     @Override
     public ZonedDateTime fromDto(TimestampDTO timestampDto) {
+        if (timestampDto == null) return null;
+
         return ZonedDateTime.ofInstant(
                 Instant.ofEpochSecond(
                         timestampDto.getSeconds(),

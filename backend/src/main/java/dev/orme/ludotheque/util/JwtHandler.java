@@ -17,7 +17,16 @@ public class JwtHandler implements Converter<org.springframework.security.oauth2
 
     @Override
     public AbstractAuthenticationToken convert(@NonNull Jwt source) {
-        return new JwtAuthenticationToken(source, Stream.concat(new JwtGrantedAuthoritiesConverter().convert(source).stream(), extractResourceRoles(source).stream()).collect(Collectors.toSet()));
+        return new JwtAuthenticationToken(
+                source,
+                Stream.concat(
+                        new JwtGrantedAuthoritiesConverter()
+                                .convert(source)
+                                .stream(),
+                        extractResourceRoles(source)
+                                .stream())
+                        .collect(Collectors.toSet())
+        );
     }
 
     private Collection<? extends GrantedAuthority> extractResourceRoles(Jwt source) {

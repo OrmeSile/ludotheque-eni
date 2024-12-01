@@ -4,9 +4,11 @@ import dev.orme.ludotheque.RentInformationDTO;
 import dev.orme.ludotheque.entities.RentInformation;
 import dev.orme.ludotheque.repositories.GameRepository;
 import dev.orme.ludotheque.repositories.UserRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+@Service
 public class RentInformationConverter implements DtoConverter<RentInformation, RentInformationDTO> {
 
     private TimestampConverter timestampConverter;
@@ -26,6 +28,8 @@ public class RentInformationConverter implements DtoConverter<RentInformation, R
 
     @Override
     public RentInformationDTO toDto(RentInformation object) {
+        if(object == null) return null;
+
         return RentInformationDTO.newBuilder()
                 .setId(object.getId().toString())
                 .setDaysRented(object.getDaysRented())
@@ -40,6 +44,8 @@ public class RentInformationConverter implements DtoConverter<RentInformation, R
 
     @Override
     public RentInformation fromDto(RentInformationDTO rentInformationDTO) {
+        if(rentInformationDTO == null) return null;
+
         return new RentInformation(
                 UUID.fromString(rentInformationDTO.getId()),
                 rentInformationDTO.getDaysRented(),

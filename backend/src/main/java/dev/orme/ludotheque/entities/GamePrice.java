@@ -12,7 +12,7 @@ public class GamePrice implements Comparable<GamePrice> {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private float price;
+    private float price = 0.0f;
     private ZonedDateTime timeOfPriceSet;
 
     @ManyToOne

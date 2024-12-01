@@ -3,6 +3,7 @@ package dev.orme.ludotheque.entities;
 import dev.orme.ludotheque.objects.RoleType;
 import jakarta.persistence.*;
 
+import java.util.SortedSet;
 import java.util.UUID;
 
 @Entity(name = "app_user")
@@ -12,12 +13,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+
     private boolean isActive = false;
     private String mail;
+
     @Column(unique = true, nullable = false)
     private String username;
     @ManyToOne(fetch = FetchType.EAGER)
     private Role role;
+    @OneToMany
+    private SortedSet<Game> games;
 
     public User() {}
 

@@ -20,6 +20,9 @@ public class GamePriceConverter implements DtoConverter<GamePrice, GamePriceDTO>
 
     @Override
     public GamePriceDTO toDto(GamePrice object) {
+
+        if(object == null) return null;
+
         return GamePriceDTO.newBuilder()
                 .setGameId(object.getGame().getId().toString())
                 .setPrice(object.getPrice())
@@ -30,6 +33,8 @@ public class GamePriceConverter implements DtoConverter<GamePrice, GamePriceDTO>
 
     @Override
     public GamePrice fromDto(GamePriceDTO gamePriceDTO) {
+        if(gamePriceDTO == null) return null;
+
         var gamePrice = new GamePrice();
         gamePrice.setId(UUID.fromString(gamePriceDTO.getId()));
         gamePrice.setPrice(gamePriceDTO.getPrice());

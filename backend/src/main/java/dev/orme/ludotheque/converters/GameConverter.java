@@ -20,36 +20,43 @@ public class GameConverter implements DtoConverter<Game, GameDTO> {
     private UserRepository userRepository;
     private TimestampConverter timestampConverter;
     private GamePriceConverter gamePriceConverter;
+    private RentInformationConverter rentInformationConverter;
 
     public GameConverter(
             GameRepository gameRepository,
             UserRepository userRepository,
             TimestampConverter timestampConverter,
-            GamePriceConverter gamePriceConverter
+            GamePriceConverter gamePriceConverter,
+            RentInformationConverter rentInformationConverter
     ) {
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
         this.timestampConverter = timestampConverter;
         this.gamePriceConverter = gamePriceConverter;
+        this.rentInformationConverter = rentInformationConverter;
     }
 
     @Override
     public GameDTO toDto(Game game) {
-
-        var instantFromGame = game.getTimeOfCreation();
-        var timeStampDTO = timestampConverter.toDto(instantFromGame);
+        if(game == null) return null;
 
         var builder = GameDTO.newBuilder();
-        builder
-                .setId(game.getId().toString())
-                .setName(game.getName())
-                .setDescription(game.getDescription())
-                .setIsRented(game.isRented())
-                .setIsActive(game.isActive())
-                .setTimeOfCreation(timeStampDTO)
-                .setRenterId(game.getRenter().getId().toString())
-                .setCurrentPrice(gamePriceConverter.toDto(game.getGamePrice()))
-                .setCurrentRentInformation(RentInformationDTO.newBuilder());
+        if(game.getId() != null)
+            builder.setId(game.getId().toString());
+        if(game.getName() != null)
+            builder.setName(game.getName());
+        if(game.getDescription() != null)
+            builder.setDescription(game.getDescription());
+        builder.setIsRented(game.isRented());
+        builder.setIsActive(game.isActive());
+        if(game.getTimeOfCreation() != null)
+            builder.setTimeOfCreation(timestampConverter.toDto(game.getTimeOfCreation()));
+        if(game.getRenter() != null)
+            builder.setRenterId(game.getRenter().getId().toString());
+        if(game.getGamePrice() != null)
+            builder.setCurrentPrice(gamePriceConverter.toDto(game.getGamePrice()));
+        if(game.getCurrentRentInformation() != null)
+            builder.setCurrentRentInformation(rentInformationConverter.toDto(game.getCurrentRentInformation()));
         return builder.build();
     }
 
