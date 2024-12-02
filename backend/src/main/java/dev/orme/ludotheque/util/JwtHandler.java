@@ -2,7 +2,6 @@ package dev.orme.ludotheque.util;
 
 import dev.orme.ludotheque.services.UserService;
 import io.micrometer.common.lang.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,9 +15,7 @@ import java.util.stream.Stream;
 
 public class JwtHandler implements Converter<org.springframework.security.oauth2.jwt.Jwt, AbstractAuthenticationToken> {
 
-    private UserService userService;
-
-    public JwtHandler() {}
+    private final UserService userService;
 
     public JwtHandler(UserService userService) {
         this.userService = userService;
@@ -34,11 +31,11 @@ public class JwtHandler implements Converter<org.springframework.security.oauth2
         var resultingToken = new CustomJwtAuthToken(
                 source,
                 Stream.concat(
-                        new JwtGrantedAuthoritiesConverter()
-                                .convert(source)
-                                .stream(),
-                        extractResourceRoles(source)
-                                .stream())
+                                new JwtGrantedAuthoritiesConverter()
+                                        .convert(source)
+                                        .stream(),
+                                extractResourceRoles(source)
+                                        .stream())
                         .collect(Collectors.toSet()),
                 userGivenName,
                 userFamilyName,

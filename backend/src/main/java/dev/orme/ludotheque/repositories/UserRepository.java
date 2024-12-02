@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Repository
 public interface UserRepository extends CrudRepository<User, UUID> {
-    public User findByUsername(String username);
-    public User findByIdAndUsername(UUID id, String username);
-    public User getFirstById(UUID id);
+    User findByUsername(String username);
+    User findByIdAndUsername(UUID id, String username);
+    User getFirstById(UUID id);
 }
