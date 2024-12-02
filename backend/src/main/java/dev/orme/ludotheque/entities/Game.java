@@ -14,10 +14,12 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column()
     private String name;
     private String description;
     private boolean isRented = false;
     private boolean isActive = false;
+    private int yearPublished;
     private ZonedDateTime timeOfCreation;
     private int maxRentDays = 0;
 
@@ -49,7 +51,8 @@ public class Game {
         this.currentRentInformation = prices.isEmpty() ? null : rentInformations.first();
     }
 
-    public Game(UUID id, String name, String description, boolean isRented, boolean isActive, ZonedDateTime timeOfCreation, User renter) {
+    public Game(UUID id, String name, String description, boolean isRented, boolean isActive,
+                ZonedDateTime timeOfCreation, User renter ) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -155,5 +158,13 @@ public class Game {
 
     public void setRentInformations(SortedSet<RentInformation> rentInformations) {
         this.rentInformations = rentInformations;
+    }
+
+    public int getYearPublished() {
+        return yearPublished;
+    }
+
+    public void setYearPublished(int yearCreated) {
+        this.yearPublished = yearCreated;
     }
 }

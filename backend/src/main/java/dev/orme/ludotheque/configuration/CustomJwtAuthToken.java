@@ -1,4 +1,4 @@
-package dev.orme.ludotheque.util;
+package dev.orme.ludotheque.configuration;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;

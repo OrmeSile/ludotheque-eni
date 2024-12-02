@@ -1,7 +1,7 @@
 package dev.orme.ludotheque.controllers;
 
 import dev.orme.ludotheque.TimestampDTO;
-import dev.orme.ludotheque.util.CustomJwtAuthToken;
+import dev.orme.ludotheque.configuration.CustomJwtAuthToken;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;

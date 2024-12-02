@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend.iml" filepath="$PROJECT_DIR$/.idea/modules/backend.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend.main.iml" filepath="$PROJECT_DIR$/.idea/modules/backend.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/frontend.iml" filepath="$PROJECT_DIR$/frontend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gameDataExtractor.iml" filepath="$PROJECT_DIR$/gameDataExtractor.iml" />
       <module fileurl="file://$PROJECT_DIR$/ludotheque.iml" filepath="$PROJECT_DIR$/ludotheque.iml" />
     </modules>
   </component>

@@ -1,7 +1,6 @@
 package dev.orme.ludotheque.configuration;
 
 import dev.orme.ludotheque.services.UserService;
-import dev.orme.ludotheque.util.JwtHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;

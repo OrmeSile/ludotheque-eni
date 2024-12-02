@@ -6,6 +6,8 @@ import dev.orme.ludotheque.repositories.RentInformationRepository;
 import dev.orme.ludotheque.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class GameService {
 
@@ -21,5 +23,9 @@ public class GameService {
 
     public Game createGame(Game game) {
         return this.gameRepository.save(game);
+    }
+
+    public List<Game> getAllActiveGames() {
+        return null;
     }
 }

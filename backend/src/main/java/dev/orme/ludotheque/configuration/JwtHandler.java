@@ -1,4 +1,4 @@
-package dev.orme.ludotheque.util;
+package dev.orme.ludotheque.configuration;
 
 import dev.orme.ludotheque.services.UserService;
 import io.micrometer.common.lang.NonNull;
