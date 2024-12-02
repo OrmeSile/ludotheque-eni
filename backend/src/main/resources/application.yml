@@ -17,10 +17,11 @@ spring:
       connection-timeout: 20000
       maximum-pool-size: 5
   jpa:
-    hibernate:
-      ddl-auto: create
     defer-datasource-initialization: true
     show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
 
 
   mvc:

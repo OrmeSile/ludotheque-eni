@@ -1,6 +1,5 @@
 package dev.orme.ludotheque.entities;
 
-import dev.orme.ludotheque.objects.RoleType;
 import jakarta.persistence.*;
 
 import java.util.SortedSet;
@@ -10,54 +9,47 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
 
     private boolean isActive = false;
-    private String mail;
 
+    @Column(unique = true)
+    private String mail;
+    private String givenName;
+    private String familyName;
     @Column(unique = true, nullable = false)
     private String username;
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Role role;
     @OneToMany
     private SortedSet<Game> games;
 
     public User() {}
 
     public User(String username) {
+        this.id = UUID.randomUUID();
         this.username = username;
-        this.role = new Role(RoleType.ROLE_USER);
-    }
-
-    public User(UUID id, Role role) {
-        this.id = id;
-        this.role = role;
-    }
-
-    public User(String username, Role role) {
-        this.username = username;
-        this.role = role;
     }
 
     public User(UUID id, String username) {
         this.id = id;
         this.username = username;
-        this.role = new Role(RoleType.ROLE_USER);
+        this.isActive = true;
     }
 
-    public User(UUID id, String username, Role role) {
+    public User(UUID id, String mail, String username) {
         this.id = id;
-        this.username = username;
-        this.role = role;
-    }
-
-    public User(UUID id, String username, String mail, boolean isActive) {
-        this.id = id;
-        this.username = username;
+        this.isActive = true;
         this.mail = mail;
-        this.isActive = isActive;
+        this.username = username;
+    }
+
+    public User(UUID uuid, String username, String email, String givenName, String familyName) {
+        this.id = uuid;
+        this.username = username;
+        this.mail = email;
+        this.givenName = givenName;
+        this.familyName = familyName;
+        this.isActive = true;
     }
 
     public UUID getId() {
@@ -68,20 +60,12 @@ public class User {
         return username;
     }
 
-    public Role getRole() {
-        return role;
-    }
-
     public void setId(UUID id) {
         this.id = id;
     }
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
     }
 
     public boolean isActive() {
@@ -98,5 +82,21 @@ public class User {
 
     public void setMail(String mail) {
         this.mail = mail;
+    }
+
+    public String getGivenName() {
+        return givenName;
+    }
+
+    public void setGivenName(String givenName) {
+        this.givenName = givenName;
+    }
+
+    public String getFamilyName() {
+        return familyName;
+    }
+
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
     }
 }

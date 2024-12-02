@@ -1,11 +1,9 @@
 package dev.orme.ludotheque.controllers;
 
 import dev.orme.ludotheque.TimestampDTO;
+import dev.orme.ludotheque.util.CustomJwtAuthToken;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +24,11 @@ public class BaseController {
 
     @GetMapping(value = "/testuser")
     public String test() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
+        var jwtAuthToken = SecurityContextHolder.getContext().getAuthentication();
+        if(jwtAuthToken.getClass() == CustomJwtAuthToken.class) {
+            var authToken = (CustomJwtAuthToken) jwtAuthToken;
+            return authToken.getEmail();
+        }
+        return null;
     }
 }
