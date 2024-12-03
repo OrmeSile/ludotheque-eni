@@ -4,6 +4,9 @@ import dev.orme.ludotheque.entities.Game;
 import dev.orme.ludotheque.repositories.GameRepository;
 import dev.orme.ludotheque.repositories.RentInformationRepository;
 import dev.orme.ludotheque.repositories.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +28,8 @@ public class GameService {
         return this.gameRepository.save(game);
     }
 
-    public List<Game> getAllActiveGames() {
-        return null;
+    public Page<Game> getGamePageWithSize(int page, int size) {
+        return gameRepository.findAll(PageRequest.of(page, size));
+
     }
 }
