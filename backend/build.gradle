@@ -34,12 +34,12 @@ protobuf {
     }
     generateProtoTasks {
         all().each {task ->
-            task.builtins {
-                js {
-                    option "import_style=commonjs"
-                    option "binary"
-                }
-            }
+//            task.builtins {
+//                js {
+//                    option "import_style=commonjs"
+//                    option "binary"
+//                }
+//            }
         }
         all()*.plugins {
             grpc {

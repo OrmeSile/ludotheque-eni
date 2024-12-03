@@ -5,4 +5,5 @@
       <sourceFolder url="file://$MODULE_DIR$/../../backend/src/main/proto" isTestSource="false" />
     </content>
   </component>
+  <component name="Go" enabled="true" />
 </module>
