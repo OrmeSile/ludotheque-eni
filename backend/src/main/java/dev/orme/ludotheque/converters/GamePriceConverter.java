@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class GamePriceConverter implements DtoConverter<GamePrice, GamePriceDTO> {
+public class GamePriceConverter implements DtoConvertable<GamePrice, GamePriceDTO> {
 
     private TimestampConverter timestampConverter;
     private GameRepository gameRepository;

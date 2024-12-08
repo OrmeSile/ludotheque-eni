@@ -24,8 +24,9 @@ message GameDTO {
   string renterId = 7;
   GamePriceDTO currentPrice = 8;
   RentInformationDTO currentRentInformation = 9;
-  repeated GamePriceDTO prices = 10;
-  repeated RentInformationDTO rentInformations = 11;
+  repeated GenreDTO genres = 10;
+  repeated GamePriceDTO prices = 11;
+  repeated RentInformationDTO rentInformations = 12;
 }
 
 message GamePriceDTO {
@@ -64,6 +65,12 @@ message TimestampDTO {
 message RentGameDto {
   string userId = 1;
   string gameId = 2;
+}
+
+message GenreDTO {
+  string id = 1;
+  string name = 2;
+  repeated GameDTO games = 3;
 }
 
 message Empty {}

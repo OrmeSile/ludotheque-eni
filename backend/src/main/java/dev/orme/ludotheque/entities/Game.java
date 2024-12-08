@@ -8,13 +8,11 @@ import java.util.TreeSet;
 import java.util.UUID;
 
 @Entity(name = "game")
-public class Game {
+public class Game implements Comparable<Game> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    @Column()
     private String name;
     private String description;
     private boolean isRented = false;
@@ -22,20 +20,18 @@ public class Game {
     private int yearPublished;
     private ZonedDateTime timeOfCreation;
     private int maxRentDays = 0;
-
     @ManyToOne()
     private User renter;
-
     @Transient
     private GamePrice gamePrice;
     @Transient
     private RentInformation currentRentInformation;
-
     @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
     private SortedSet<GamePrice> prices =  new TreeSet<>();
-
     @OneToMany(fetch = FetchType.LAZY)
     private SortedSet<RentInformation> rentInformations = new TreeSet<>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    private SortedSet<Genre> genres = new TreeSet<>();
 
     public Game() {
     }
@@ -166,5 +162,18 @@ public class Game {
 
     public void setYearPublished(int yearCreated) {
         this.yearPublished = yearCreated;
+    }
+
+    public SortedSet<Genre> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(SortedSet<Genre> genres) {
+        this.genres = genres;
+    }
+
+    @Override
+    public int compareTo(Game o) {
+        return this.name.compareTo(o.name);
     }
 }

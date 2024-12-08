@@ -11,6 +11,8 @@ export const securityInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
+  console.log("passed in interceptor ?")
+
   return next(
     req.clone({
       headers: req.headers.set("Authorization", `Bearer ${bearer}`),

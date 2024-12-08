@@ -1,8 +1,6 @@
 package dev.orme.ludotheque.converters;
 
 import dev.orme.ludotheque.GameDTO;
-import dev.orme.ludotheque.RentInformationDTO;
-import dev.orme.ludotheque.TimestampDTO;
 import dev.orme.ludotheque.entities.Game;
 import dev.orme.ludotheque.repositories.GameRepository;
 import dev.orme.ludotheque.repositories.UserRepository;
@@ -14,26 +12,26 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Service
-public class GameConverter implements DtoConverter<Game, GameDTO> {
+public class GameConverter implements DtoConvertable<Game, GameDTO> {
 
-    private GameRepository gameRepository;
-    private UserRepository userRepository;
-    private TimestampConverter timestampConverter;
-    private GamePriceConverter gamePriceConverter;
-    private RentInformationConverter rentInformationConverter;
+    private final GenreConverter genreConverter;
+    private final UserRepository userRepository;
+    private final TimestampConverter timestampConverter;
+    private final GamePriceConverter gamePriceConverter;
+    private final RentInformationConverter rentInformationConverter;
 
     public GameConverter(
             GameRepository gameRepository,
             UserRepository userRepository,
             TimestampConverter timestampConverter,
             GamePriceConverter gamePriceConverter,
-            RentInformationConverter rentInformationConverter
-    ) {
-        this.gameRepository = gameRepository;
+            RentInformationConverter rentInformationConverter,
+            GenreConverter genreConverter) {
         this.userRepository = userRepository;
         this.timestampConverter = timestampConverter;
         this.gamePriceConverter = gamePriceConverter;
         this.rentInformationConverter = rentInformationConverter;
+        this.genreConverter = genreConverter;
     }
 
     @Override
@@ -57,6 +55,8 @@ public class GameConverter implements DtoConverter<Game, GameDTO> {
             builder.setCurrentPrice(gamePriceConverter.toDto(game.getGamePrice()));
         if(game.getCurrentRentInformation() != null)
             builder.setCurrentRentInformation(rentInformationConverter.toDto(game.getCurrentRentInformation()));
+        if(game.getGenres() != null)
+            builder.addAllGenres(game.getGenres().stream().map(genreConverter::toDto).toList());
         return builder.build();
     }
 

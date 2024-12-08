@@ -1,1 +1,0 @@
-protoc  --plugin="protoc-gen-ts" --proto_path="D:\code\ludotheque\backend\src\main\proto\" --js_out="import_style=commonjs,binary:./proto/generated" D:\code\ludotheque\backend\src\main\proto\ludotheque.proto

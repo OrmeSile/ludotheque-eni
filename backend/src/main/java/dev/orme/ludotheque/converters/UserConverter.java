@@ -5,7 +5,7 @@ import dev.orme.ludotheque.entities.User;
 
 import java.util.UUID;
 
-public class UserConverter implements DtoConverter<User, UserDTO> {
+public class UserConverter implements DtoConvertable<User, UserDTO> {
 
     @Override
     public UserDTO toDto(User user) {

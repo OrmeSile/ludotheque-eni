@@ -8,7 +8,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 @Service
-public class TimestampConverter implements DtoConverter<ZonedDateTime, TimestampDTO> {
+public class TimestampConverter implements DtoConvertable<ZonedDateTime, TimestampDTO> {
 
     @Override
     public TimestampDTO toDto(ZonedDateTime zonedDateTime) {

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class RentInformationConverter implements DtoConverter<RentInformation, RentInformationDTO> {
+public class RentInformationConverter implements DtoConvertable<RentInformation, RentInformationDTO> {
 
     private TimestampConverter timestampConverter;
     private GameRepository gameRepository;
