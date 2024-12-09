@@ -2,10 +2,13 @@ import {Component, inject, signal, WritableSignal} from '@angular/core';
 import {GameDTO, GameListPaginationDTO} from '../../../proto/generated/ludotheque';
 import {GameListService} from '../../admin/games/game-list.service';
 import {SecurityStore} from '../../shared/security/security-store.service';
+import {GameListItemComponent} from './game-list-item/game-list-item.component';
 
 @Component({
   selector: 'app-game-list',
-  imports: [],
+  imports: [
+    GameListItemComponent
+  ],
   templateUrl: './game-list.component.html',
   styleUrl: './game-list.component.css'
 })
@@ -20,4 +23,6 @@ export class GameListComponent {
       this.gamelist.set((games as GameListPaginationDTO).games)
       }})
   }
+
+  protected readonly JSON = JSON;
 }

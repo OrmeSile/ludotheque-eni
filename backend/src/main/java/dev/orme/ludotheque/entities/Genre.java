@@ -14,6 +14,7 @@ public class Genre implements Comparable<Genre>{
     private UUID id;
     @Column(nullable = false, unique = true)
     private String name;
+    private String description;
     @ManyToMany(mappedBy = "genres")
     private SortedSet<Game> games = new TreeSet<>();
 
@@ -21,9 +22,7 @@ public class Genre implements Comparable<Genre>{
         this.name = name;
     }
 
-    public Genre() {
-
-    }
+    public Genre() {}
 
     public UUID getId() {
         return id;
@@ -47,6 +46,14 @@ public class Genre implements Comparable<Genre>{
 
     public void setGames(SortedSet<Game> games) {
         this.games = games;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

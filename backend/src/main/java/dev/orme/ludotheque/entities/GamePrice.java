@@ -14,9 +14,11 @@ public class GamePrice implements Comparable<GamePrice> {
 
     private float price = 0.0f;
     private ZonedDateTime timeOfPriceSet;
-
     @ManyToOne
-    private Game game;
+    private RentInformation rentInformation;
+    @ManyToOne
+    private GameCopy gameCopy;
+
 
     @Override
     public int compareTo(GamePrice gamePrice) {
@@ -47,11 +49,19 @@ public class GamePrice implements Comparable<GamePrice> {
         this.timeOfPriceSet = timeOfPriceSet;
     }
 
-    public Game getGame() {
-        return game;
+    public GameCopy getGameCopy() {
+        return gameCopy;
     }
 
-    public void setGame(Game game) {
-        this.game = game;
+    public void setGameCopy(GameCopy gameCopy) {
+        this.gameCopy = gameCopy;
+    }
+
+    public RentInformation getRentInformation() {
+        return rentInformation;
+    }
+
+    public void setRentInformation(RentInformation rentInformation) {
+        this.rentInformation = rentInformation;
     }
 }

@@ -9,6 +9,51 @@ import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 
 export const protobufPackage = "ludotheque";
 
+export enum WearStatusDTO {
+  MINT = 0,
+  EXCELLENT = 1,
+  USED = 2,
+  DAMAGED = 3,
+  UNRECOGNIZED = -1,
+}
+
+export function wearStatusDTOFromJSON(object: any): WearStatusDTO {
+  switch (object) {
+    case 0:
+    case "MINT":
+      return WearStatusDTO.MINT;
+    case 1:
+    case "EXCELLENT":
+      return WearStatusDTO.EXCELLENT;
+    case 2:
+    case "USED":
+      return WearStatusDTO.USED;
+    case 3:
+    case "DAMAGED":
+      return WearStatusDTO.DAMAGED;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return WearStatusDTO.UNRECOGNIZED;
+  }
+}
+
+export function wearStatusDTOToJSON(object: WearStatusDTO): string {
+  switch (object) {
+    case WearStatusDTO.MINT:
+      return "MINT";
+    case WearStatusDTO.EXCELLENT:
+      return "EXCELLENT";
+    case WearStatusDTO.USED:
+      return "USED";
+    case WearStatusDTO.DAMAGED:
+      return "DAMAGED";
+    case WearStatusDTO.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
 export interface GameListPaginationDTO {
   page: number;
   totalPages: number;
@@ -22,20 +67,26 @@ export interface GameDTO {
   id: string;
   name: string;
   description: string;
+  timeOfCreation: TimestampDTO | undefined;
+  genres: GenreDTO[];
+  copies: GameCopyDTO[];
+}
+
+export interface GameCopyDTO {
+  id: string;
+  game: GameDTO | undefined;
+  currentRentInformation: RentInformationDTO | undefined;
+  currentPrice: GamePriceDTO | undefined;
+  rentInformation: RentInformationDTO[];
+  prices: GamePriceDTO[];
+  wearStatus: WearStatusDTO;
   isRented: boolean;
   isActive: boolean;
-  timeOfCreation: TimestampDTO | undefined;
-  renterId: string;
-  currentPrice: GamePriceDTO | undefined;
-  currentRentInformation: RentInformationDTO | undefined;
-  genres: GenreDTO[];
-  prices: GamePriceDTO[];
-  rentInformations: RentInformationDTO[];
 }
 
 export interface GamePriceDTO {
   id: string;
-  gameId: string;
+  gameCopyId: string;
   price: number;
   timeOfPriceSet: TimestampDTO | undefined;
 }
@@ -45,7 +96,7 @@ export interface RentInformationDTO {
   daysRented: number;
   priceAtRentTime: GamePriceDTO | undefined;
   maxRentDaysAtRentTime: number;
-  gameId: string;
+  gameCopyId: string;
   userId: string;
   timestampOfRent: TimestampDTO | undefined;
   timestampOfReturn: TimestampDTO | undefined;
@@ -74,6 +125,7 @@ export interface RentGameDto {
 export interface GenreDTO {
   id: string;
   name: string;
+  description: string;
   games: GameDTO[];
 }
 
@@ -221,20 +273,7 @@ export const GameListPaginationDTO: MessageFns<GameListPaginationDTO> = {
 };
 
 function createBaseGameDTO(): GameDTO {
-  return {
-    id: "",
-    name: "",
-    description: "",
-    isRented: false,
-    isActive: false,
-    timeOfCreation: undefined,
-    renterId: "",
-    currentPrice: undefined,
-    currentRentInformation: undefined,
-    genres: [],
-    prices: [],
-    rentInformations: [],
-  };
+  return { id: "", name: "", description: "", timeOfCreation: undefined, genres: [], copies: [] };
 }
 
 export const GameDTO: MessageFns<GameDTO> = {
@@ -248,32 +287,14 @@ export const GameDTO: MessageFns<GameDTO> = {
     if (message.description !== "") {
       writer.uint32(26).string(message.description);
     }
-    if (message.isRented !== false) {
-      writer.uint32(32).bool(message.isRented);
-    }
-    if (message.isActive !== false) {
-      writer.uint32(40).bool(message.isActive);
-    }
     if (message.timeOfCreation !== undefined) {
-      TimestampDTO.encode(message.timeOfCreation, writer.uint32(50).fork()).join();
-    }
-    if (message.renterId !== "") {
-      writer.uint32(58).string(message.renterId);
-    }
-    if (message.currentPrice !== undefined) {
-      GamePriceDTO.encode(message.currentPrice, writer.uint32(66).fork()).join();
-    }
-    if (message.currentRentInformation !== undefined) {
-      RentInformationDTO.encode(message.currentRentInformation, writer.uint32(74).fork()).join();
+      TimestampDTO.encode(message.timeOfCreation, writer.uint32(34).fork()).join();
     }
     for (const v of message.genres) {
-      GenreDTO.encode(v!, writer.uint32(82).fork()).join();
+      GenreDTO.encode(v!, writer.uint32(42).fork()).join();
     }
-    for (const v of message.prices) {
-      GamePriceDTO.encode(v!, writer.uint32(90).fork()).join();
-    }
-    for (const v of message.rentInformations) {
-      RentInformationDTO.encode(v!, writer.uint32(98).fork()).join();
+    for (const v of message.copies) {
+      GameCopyDTO.encode(v!, writer.uint32(50).fork()).join();
     }
     return writer;
   },
@@ -310,19 +331,19 @@ export const GameDTO: MessageFns<GameDTO> = {
           continue;
         }
         case 4: {
-          if (tag !== 32) {
+          if (tag !== 34) {
             break;
           }
 
-          message.isRented = reader.bool();
+          message.timeOfCreation = TimestampDTO.decode(reader, reader.uint32());
           continue;
         }
         case 5: {
-          if (tag !== 40) {
+          if (tag !== 42) {
             break;
           }
 
-          message.isActive = reader.bool();
+          message.genres.push(GenreDTO.decode(reader, reader.uint32()));
           continue;
         }
         case 6: {
@@ -330,55 +351,7 @@ export const GameDTO: MessageFns<GameDTO> = {
             break;
           }
 
-          message.timeOfCreation = TimestampDTO.decode(reader, reader.uint32());
-          continue;
-        }
-        case 7: {
-          if (tag !== 58) {
-            break;
-          }
-
-          message.renterId = reader.string();
-          continue;
-        }
-        case 8: {
-          if (tag !== 66) {
-            break;
-          }
-
-          message.currentPrice = GamePriceDTO.decode(reader, reader.uint32());
-          continue;
-        }
-        case 9: {
-          if (tag !== 74) {
-            break;
-          }
-
-          message.currentRentInformation = RentInformationDTO.decode(reader, reader.uint32());
-          continue;
-        }
-        case 10: {
-          if (tag !== 82) {
-            break;
-          }
-
-          message.genres.push(GenreDTO.decode(reader, reader.uint32()));
-          continue;
-        }
-        case 11: {
-          if (tag !== 90) {
-            break;
-          }
-
-          message.prices.push(GamePriceDTO.decode(reader, reader.uint32()));
-          continue;
-        }
-        case 12: {
-          if (tag !== 98) {
-            break;
-          }
-
-          message.rentInformations.push(RentInformationDTO.decode(reader, reader.uint32()));
+          message.copies.push(GameCopyDTO.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -395,19 +368,9 @@ export const GameDTO: MessageFns<GameDTO> = {
       id: isSet(object.id) ? globalThis.String(object.id) : "",
       name: isSet(object.name) ? globalThis.String(object.name) : "",
       description: isSet(object.description) ? globalThis.String(object.description) : "",
-      isRented: isSet(object.isRented) ? globalThis.Boolean(object.isRented) : false,
-      isActive: isSet(object.isActive) ? globalThis.Boolean(object.isActive) : false,
       timeOfCreation: isSet(object.timeOfCreation) ? TimestampDTO.fromJSON(object.timeOfCreation) : undefined,
-      renterId: isSet(object.renterId) ? globalThis.String(object.renterId) : "",
-      currentPrice: isSet(object.currentPrice) ? GamePriceDTO.fromJSON(object.currentPrice) : undefined,
-      currentRentInformation: isSet(object.currentRentInformation)
-        ? RentInformationDTO.fromJSON(object.currentRentInformation)
-        : undefined,
       genres: globalThis.Array.isArray(object?.genres) ? object.genres.map((e: any) => GenreDTO.fromJSON(e)) : [],
-      prices: globalThis.Array.isArray(object?.prices) ? object.prices.map((e: any) => GamePriceDTO.fromJSON(e)) : [],
-      rentInformations: globalThis.Array.isArray(object?.rentInformations)
-        ? object.rentInformations.map((e: any) => RentInformationDTO.fromJSON(e))
-        : [],
+      copies: globalThis.Array.isArray(object?.copies) ? object.copies.map((e: any) => GameCopyDTO.fromJSON(e)) : [],
     };
   },
 
@@ -422,32 +385,14 @@ export const GameDTO: MessageFns<GameDTO> = {
     if (message.description !== "") {
       obj.description = message.description;
     }
-    if (message.isRented !== false) {
-      obj.isRented = message.isRented;
-    }
-    if (message.isActive !== false) {
-      obj.isActive = message.isActive;
-    }
     if (message.timeOfCreation !== undefined) {
       obj.timeOfCreation = TimestampDTO.toJSON(message.timeOfCreation);
-    }
-    if (message.renterId !== "") {
-      obj.renterId = message.renterId;
-    }
-    if (message.currentPrice !== undefined) {
-      obj.currentPrice = GamePriceDTO.toJSON(message.currentPrice);
-    }
-    if (message.currentRentInformation !== undefined) {
-      obj.currentRentInformation = RentInformationDTO.toJSON(message.currentRentInformation);
     }
     if (message.genres?.length) {
       obj.genres = message.genres.map((e) => GenreDTO.toJSON(e));
     }
-    if (message.prices?.length) {
-      obj.prices = message.prices.map((e) => GamePriceDTO.toJSON(e));
-    }
-    if (message.rentInformations?.length) {
-      obj.rentInformations = message.rentInformations.map((e) => RentInformationDTO.toJSON(e));
+    if (message.copies?.length) {
+      obj.copies = message.copies.map((e) => GameCopyDTO.toJSON(e));
     }
     return obj;
   },
@@ -460,28 +405,224 @@ export const GameDTO: MessageFns<GameDTO> = {
     message.id = object.id ?? "";
     message.name = object.name ?? "";
     message.description = object.description ?? "";
-    message.isRented = object.isRented ?? false;
-    message.isActive = object.isActive ?? false;
     message.timeOfCreation = (object.timeOfCreation !== undefined && object.timeOfCreation !== null)
       ? TimestampDTO.fromPartial(object.timeOfCreation)
       : undefined;
-    message.renterId = object.renterId ?? "";
-    message.currentPrice = (object.currentPrice !== undefined && object.currentPrice !== null)
-      ? GamePriceDTO.fromPartial(object.currentPrice)
-      : undefined;
+    message.genres = object.genres?.map((e) => GenreDTO.fromPartial(e)) || [];
+    message.copies = object.copies?.map((e) => GameCopyDTO.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseGameCopyDTO(): GameCopyDTO {
+  return {
+    id: "",
+    game: undefined,
+    currentRentInformation: undefined,
+    currentPrice: undefined,
+    rentInformation: [],
+    prices: [],
+    wearStatus: 0,
+    isRented: false,
+    isActive: false,
+  };
+}
+
+export const GameCopyDTO: MessageFns<GameCopyDTO> = {
+  encode(message: GameCopyDTO, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    if (message.game !== undefined) {
+      GameDTO.encode(message.game, writer.uint32(18).fork()).join();
+    }
+    if (message.currentRentInformation !== undefined) {
+      RentInformationDTO.encode(message.currentRentInformation, writer.uint32(26).fork()).join();
+    }
+    if (message.currentPrice !== undefined) {
+      GamePriceDTO.encode(message.currentPrice, writer.uint32(34).fork()).join();
+    }
+    for (const v of message.rentInformation) {
+      RentInformationDTO.encode(v!, writer.uint32(42).fork()).join();
+    }
+    for (const v of message.prices) {
+      GamePriceDTO.encode(v!, writer.uint32(50).fork()).join();
+    }
+    if (message.wearStatus !== 0) {
+      writer.uint32(56).int32(message.wearStatus);
+    }
+    if (message.isRented !== false) {
+      writer.uint32(64).bool(message.isRented);
+    }
+    if (message.isActive !== false) {
+      writer.uint32(72).bool(message.isActive);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GameCopyDTO {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGameCopyDTO();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.game = GameDTO.decode(reader, reader.uint32());
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.currentRentInformation = RentInformationDTO.decode(reader, reader.uint32());
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.currentPrice = GamePriceDTO.decode(reader, reader.uint32());
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.rentInformation.push(RentInformationDTO.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 6: {
+          if (tag !== 50) {
+            break;
+          }
+
+          message.prices.push(GamePriceDTO.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 7: {
+          if (tag !== 56) {
+            break;
+          }
+
+          message.wearStatus = reader.int32() as any;
+          continue;
+        }
+        case 8: {
+          if (tag !== 64) {
+            break;
+          }
+
+          message.isRented = reader.bool();
+          continue;
+        }
+        case 9: {
+          if (tag !== 72) {
+            break;
+          }
+
+          message.isActive = reader.bool();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GameCopyDTO {
+    return {
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      game: isSet(object.game) ? GameDTO.fromJSON(object.game) : undefined,
+      currentRentInformation: isSet(object.currentRentInformation)
+        ? RentInformationDTO.fromJSON(object.currentRentInformation)
+        : undefined,
+      currentPrice: isSet(object.currentPrice) ? GamePriceDTO.fromJSON(object.currentPrice) : undefined,
+      rentInformation: globalThis.Array.isArray(object?.rentInformation)
+        ? object.rentInformation.map((e: any) => RentInformationDTO.fromJSON(e))
+        : [],
+      prices: globalThis.Array.isArray(object?.prices) ? object.prices.map((e: any) => GamePriceDTO.fromJSON(e)) : [],
+      wearStatus: isSet(object.wearStatus) ? wearStatusDTOFromJSON(object.wearStatus) : 0,
+      isRented: isSet(object.isRented) ? globalThis.Boolean(object.isRented) : false,
+      isActive: isSet(object.isActive) ? globalThis.Boolean(object.isActive) : false,
+    };
+  },
+
+  toJSON(message: GameCopyDTO): unknown {
+    const obj: any = {};
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.game !== undefined) {
+      obj.game = GameDTO.toJSON(message.game);
+    }
+    if (message.currentRentInformation !== undefined) {
+      obj.currentRentInformation = RentInformationDTO.toJSON(message.currentRentInformation);
+    }
+    if (message.currentPrice !== undefined) {
+      obj.currentPrice = GamePriceDTO.toJSON(message.currentPrice);
+    }
+    if (message.rentInformation?.length) {
+      obj.rentInformation = message.rentInformation.map((e) => RentInformationDTO.toJSON(e));
+    }
+    if (message.prices?.length) {
+      obj.prices = message.prices.map((e) => GamePriceDTO.toJSON(e));
+    }
+    if (message.wearStatus !== 0) {
+      obj.wearStatus = wearStatusDTOToJSON(message.wearStatus);
+    }
+    if (message.isRented !== false) {
+      obj.isRented = message.isRented;
+    }
+    if (message.isActive !== false) {
+      obj.isActive = message.isActive;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GameCopyDTO>, I>>(base?: I): GameCopyDTO {
+    return GameCopyDTO.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GameCopyDTO>, I>>(object: I): GameCopyDTO {
+    const message = createBaseGameCopyDTO();
+    message.id = object.id ?? "";
+    message.game = (object.game !== undefined && object.game !== null) ? GameDTO.fromPartial(object.game) : undefined;
     message.currentRentInformation =
       (object.currentRentInformation !== undefined && object.currentRentInformation !== null)
         ? RentInformationDTO.fromPartial(object.currentRentInformation)
         : undefined;
-    message.genres = object.genres?.map((e) => GenreDTO.fromPartial(e)) || [];
+    message.currentPrice = (object.currentPrice !== undefined && object.currentPrice !== null)
+      ? GamePriceDTO.fromPartial(object.currentPrice)
+      : undefined;
+    message.rentInformation = object.rentInformation?.map((e) => RentInformationDTO.fromPartial(e)) || [];
     message.prices = object.prices?.map((e) => GamePriceDTO.fromPartial(e)) || [];
-    message.rentInformations = object.rentInformations?.map((e) => RentInformationDTO.fromPartial(e)) || [];
+    message.wearStatus = object.wearStatus ?? 0;
+    message.isRented = object.isRented ?? false;
+    message.isActive = object.isActive ?? false;
     return message;
   },
 };
 
 function createBaseGamePriceDTO(): GamePriceDTO {
-  return { id: "", gameId: "", price: 0, timeOfPriceSet: undefined };
+  return { id: "", gameCopyId: "", price: 0, timeOfPriceSet: undefined };
 }
 
 export const GamePriceDTO: MessageFns<GamePriceDTO> = {
@@ -489,8 +630,8 @@ export const GamePriceDTO: MessageFns<GamePriceDTO> = {
     if (message.id !== "") {
       writer.uint32(10).string(message.id);
     }
-    if (message.gameId !== "") {
-      writer.uint32(18).string(message.gameId);
+    if (message.gameCopyId !== "") {
+      writer.uint32(18).string(message.gameCopyId);
     }
     if (message.price !== 0) {
       writer.uint32(29).float(message.price);
@@ -521,7 +662,7 @@ export const GamePriceDTO: MessageFns<GamePriceDTO> = {
             break;
           }
 
-          message.gameId = reader.string();
+          message.gameCopyId = reader.string();
           continue;
         }
         case 3: {
@@ -552,7 +693,7 @@ export const GamePriceDTO: MessageFns<GamePriceDTO> = {
   fromJSON(object: any): GamePriceDTO {
     return {
       id: isSet(object.id) ? globalThis.String(object.id) : "",
-      gameId: isSet(object.gameId) ? globalThis.String(object.gameId) : "",
+      gameCopyId: isSet(object.gameCopyId) ? globalThis.String(object.gameCopyId) : "",
       price: isSet(object.price) ? globalThis.Number(object.price) : 0,
       timeOfPriceSet: isSet(object.timeOfPriceSet) ? TimestampDTO.fromJSON(object.timeOfPriceSet) : undefined,
     };
@@ -563,8 +704,8 @@ export const GamePriceDTO: MessageFns<GamePriceDTO> = {
     if (message.id !== "") {
       obj.id = message.id;
     }
-    if (message.gameId !== "") {
-      obj.gameId = message.gameId;
+    if (message.gameCopyId !== "") {
+      obj.gameCopyId = message.gameCopyId;
     }
     if (message.price !== 0) {
       obj.price = message.price;
@@ -581,7 +722,7 @@ export const GamePriceDTO: MessageFns<GamePriceDTO> = {
   fromPartial<I extends Exact<DeepPartial<GamePriceDTO>, I>>(object: I): GamePriceDTO {
     const message = createBaseGamePriceDTO();
     message.id = object.id ?? "";
-    message.gameId = object.gameId ?? "";
+    message.gameCopyId = object.gameCopyId ?? "";
     message.price = object.price ?? 0;
     message.timeOfPriceSet = (object.timeOfPriceSet !== undefined && object.timeOfPriceSet !== null)
       ? TimestampDTO.fromPartial(object.timeOfPriceSet)
@@ -596,7 +737,7 @@ function createBaseRentInformationDTO(): RentInformationDTO {
     daysRented: 0,
     priceAtRentTime: undefined,
     maxRentDaysAtRentTime: 0,
-    gameId: "",
+    gameCopyId: "",
     userId: "",
     timestampOfRent: undefined,
     timestampOfReturn: undefined,
@@ -617,8 +758,8 @@ export const RentInformationDTO: MessageFns<RentInformationDTO> = {
     if (message.maxRentDaysAtRentTime !== 0) {
       writer.uint32(32).int32(message.maxRentDaysAtRentTime);
     }
-    if (message.gameId !== "") {
-      writer.uint32(42).string(message.gameId);
+    if (message.gameCopyId !== "") {
+      writer.uint32(42).string(message.gameCopyId);
     }
     if (message.userId !== "") {
       writer.uint32(50).string(message.userId);
@@ -676,7 +817,7 @@ export const RentInformationDTO: MessageFns<RentInformationDTO> = {
             break;
           }
 
-          message.gameId = reader.string();
+          message.gameCopyId = reader.string();
           continue;
         }
         case 6: {
@@ -718,7 +859,7 @@ export const RentInformationDTO: MessageFns<RentInformationDTO> = {
       daysRented: isSet(object.daysRented) ? globalThis.Number(object.daysRented) : 0,
       priceAtRentTime: isSet(object.priceAtRentTime) ? GamePriceDTO.fromJSON(object.priceAtRentTime) : undefined,
       maxRentDaysAtRentTime: isSet(object.maxRentDaysAtRentTime) ? globalThis.Number(object.maxRentDaysAtRentTime) : 0,
-      gameId: isSet(object.gameId) ? globalThis.String(object.gameId) : "",
+      gameCopyId: isSet(object.gameCopyId) ? globalThis.String(object.gameCopyId) : "",
       userId: isSet(object.userId) ? globalThis.String(object.userId) : "",
       timestampOfRent: isSet(object.timestampOfRent) ? TimestampDTO.fromJSON(object.timestampOfRent) : undefined,
       timestampOfReturn: isSet(object.timestampOfReturn) ? TimestampDTO.fromJSON(object.timestampOfReturn) : undefined,
@@ -739,8 +880,8 @@ export const RentInformationDTO: MessageFns<RentInformationDTO> = {
     if (message.maxRentDaysAtRentTime !== 0) {
       obj.maxRentDaysAtRentTime = Math.round(message.maxRentDaysAtRentTime);
     }
-    if (message.gameId !== "") {
-      obj.gameId = message.gameId;
+    if (message.gameCopyId !== "") {
+      obj.gameCopyId = message.gameCopyId;
     }
     if (message.userId !== "") {
       obj.userId = message.userId;
@@ -765,7 +906,7 @@ export const RentInformationDTO: MessageFns<RentInformationDTO> = {
       ? GamePriceDTO.fromPartial(object.priceAtRentTime)
       : undefined;
     message.maxRentDaysAtRentTime = object.maxRentDaysAtRentTime ?? 0;
-    message.gameId = object.gameId ?? "";
+    message.gameCopyId = object.gameCopyId ?? "";
     message.userId = object.userId ?? "";
     message.timestampOfRent = (object.timestampOfRent !== undefined && object.timestampOfRent !== null)
       ? TimestampDTO.fromPartial(object.timestampOfRent)
@@ -1086,7 +1227,7 @@ export const RentGameDto: MessageFns<RentGameDto> = {
 };
 
 function createBaseGenreDTO(): GenreDTO {
-  return { id: "", name: "", games: [] };
+  return { id: "", name: "", description: "", games: [] };
 }
 
 export const GenreDTO: MessageFns<GenreDTO> = {
@@ -1097,8 +1238,11 @@ export const GenreDTO: MessageFns<GenreDTO> = {
     if (message.name !== "") {
       writer.uint32(18).string(message.name);
     }
+    if (message.description !== "") {
+      writer.uint32(26).string(message.description);
+    }
     for (const v of message.games) {
-      GameDTO.encode(v!, writer.uint32(26).fork()).join();
+      GameDTO.encode(v!, writer.uint32(34).fork()).join();
     }
     return writer;
   },
@@ -1131,6 +1275,14 @@ export const GenreDTO: MessageFns<GenreDTO> = {
             break;
           }
 
+          message.description = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
           message.games.push(GameDTO.decode(reader, reader.uint32()));
           continue;
         }
@@ -1147,6 +1299,7 @@ export const GenreDTO: MessageFns<GenreDTO> = {
     return {
       id: isSet(object.id) ? globalThis.String(object.id) : "",
       name: isSet(object.name) ? globalThis.String(object.name) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
       games: globalThis.Array.isArray(object?.games) ? object.games.map((e: any) => GameDTO.fromJSON(e)) : [],
     };
   },
@@ -1158,6 +1311,9 @@ export const GenreDTO: MessageFns<GenreDTO> = {
     }
     if (message.name !== "") {
       obj.name = message.name;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
     }
     if (message.games?.length) {
       obj.games = message.games.map((e) => GameDTO.toJSON(e));
@@ -1172,6 +1328,7 @@ export const GenreDTO: MessageFns<GenreDTO> = {
     const message = createBaseGenreDTO();
     message.id = object.id ?? "";
     message.name = object.name ?? "";
+    message.description = object.description ?? "";
     message.games = object.games?.map((e) => GameDTO.fromPartial(e)) || [];
     return message;
   },

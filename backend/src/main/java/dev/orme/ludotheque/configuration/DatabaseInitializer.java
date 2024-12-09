@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class DatabaseInitializer implements ApplicationRunner {
@@ -121,6 +122,7 @@ public class DatabaseInitializer implements ApplicationRunner {
         for(int i = 0; i < genres.length; i++) {
             savedGenres[i] = genreRepository.save(new Genre(genres[i]));
         }
+        Logger logger = LoggerFactory.getLogger(DatabaseInitializer.class);
         Random random = new Random();
         gameRepository.findAll().forEach(game -> {
             if(game.getGenres().isEmpty()){
@@ -133,6 +135,7 @@ public class DatabaseInitializer implements ApplicationRunner {
                      genresToAdd.add(gameGenre);
                 }
                 game.setGenres(genresToAdd);
+                logger.warn(gameRepository.save(game).getGenres().toString());
         }});
     }
 }

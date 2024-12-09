@@ -1,0 +1,10 @@
+@if (game()) {
+<li class="game-item">
+  <p class="name">{{ name() }}</p>
+  <ul class="genre-list">
+    @for (genre of genres(); track genre.id){
+      <li class="genre-item">{{genre.name}}</li>
+    }
+  </ul>
+</li>
+}

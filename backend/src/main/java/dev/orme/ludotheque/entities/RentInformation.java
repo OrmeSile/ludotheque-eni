@@ -16,9 +16,10 @@ public class RentInformation implements Comparable<RentInformation> {
     private int  maxRentDaysAtRentTime = 0;
     private ZonedDateTime timeOfRent;
     private ZonedDateTime timeOfReturn;
-
+    @Enumerated(EnumType.STRING)
+    private WearStatus wearStatus;
     @ManyToOne
-    private Game game;
+    private GameCopy gameCopy;
     @OneToOne
     private GamePrice priceAtRentTime;
 
@@ -28,7 +29,7 @@ public class RentInformation implements Comparable<RentInformation> {
     public RentInformation(UUID id,
                            int daysRented,
                            int maxRentDaysAtRentTime,
-                           Game game,
+                           GameCopy gameCopy,
                            User user,
                            GamePrice priceAtRentTime,
                            ZonedDateTime timeOfRent,
@@ -37,7 +38,7 @@ public class RentInformation implements Comparable<RentInformation> {
         this.daysRented = daysRented;
         this.maxRentDaysAtRentTime = maxRentDaysAtRentTime;
         this.timeOfRent = timeOfRent;
-        this.game = game;
+        this.gameCopy = gameCopy;
         this.priceAtRentTime = priceAtRentTime;
         this.user = user;
         this.timeOfReturn = timeOfReturn;
@@ -83,14 +84,6 @@ public class RentInformation implements Comparable<RentInformation> {
         this.timeOfRent = timeOfRent;
     }
 
-    public Game getGame() {
-        return game;
-    }
-
-    public void setGame(Game game) {
-        this.game = game;
-    }
-
     public GamePrice getPriceAtRentTime() {
         return priceAtRentTime;
     }
@@ -113,5 +106,13 @@ public class RentInformation implements Comparable<RentInformation> {
 
     public void setTimeOfReturn(ZonedDateTime timeOfReturn) {
         this.timeOfReturn = timeOfReturn;
+    }
+
+    public GameCopy getGameCopy() {
+        return gameCopy;
+    }
+
+    public void setGameCopy(GameCopy gameCopy) {
+        this.gameCopy = gameCopy;
     }
 }

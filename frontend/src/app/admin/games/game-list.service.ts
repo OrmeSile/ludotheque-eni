@@ -19,7 +19,9 @@ export class GameListService {
       responseType: "arraybuffer"
     }).pipe(
       map(data => {
-        return GameListPaginationDTO.decode(new Uint8Array(data))
+        const decoded = GameListPaginationDTO.decode(new Uint8Array(data))
+        console.log(decoded)
+        return decoded
       }
       ))
   }

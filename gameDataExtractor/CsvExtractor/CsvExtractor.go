@@ -3,7 +3,6 @@ package CsvExtractor
 import (
 	"encoding/csv"
 	"fmt"
-	"gameDataExtractor/LLaMaDescriptionBuilder"
 	"os"
 	"strings"
 )
@@ -82,11 +81,11 @@ func ExtractData(path string) {
 }
 
 func formatToSqlString(name string, yearPublished string) string {
-	return fmt.Sprintf("INSERT INTO public.game (is_active,is_rented, max_rent_days, time_of_creation, id, renter_id, description, name, year_published) values (false, false, 0, now(), gen_random_uuid(), null, null, '%s', %s);\n", sanitize(clean(name)), sanitize(clean(yearPublished)))
+	return fmt.Sprintf("INSERT INTO public.game (time_of_creation, id, description, name, year_published) values (now(), gen_random_uuid(), null, '%s', %s);\n", sanitize(clean(name)), sanitize(clean(yearPublished)))
 }
 
 func formatToSqlStringWithDescription(description string, name string, yearPublished string) string {
-	return fmt.Sprintf("INSERT INTO public.game (is_active,is_rented, max_rent_days, time_of_creation, id, renter_id, description, name, year_published) values (false, false, 0, now(), gen_random_uuid(), null, %s, '%s', %s);\n", sanitize(clean(description)), sanitize(clean(name)), sanitize(clean(yearPublished)))
+	return fmt.Sprintf("INSERT INTO public.game (time_of_creation, id, description, name, year_published) values (now(), gen_random_uuid(), %s, '%s', %s);\n", sanitize(clean(description)), sanitize(clean(name)), sanitize(clean(yearPublished)))
 }
 
 func clean(data string) string {

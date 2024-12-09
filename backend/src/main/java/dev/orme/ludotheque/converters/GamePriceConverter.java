@@ -2,6 +2,7 @@ package dev.orme.ludotheque.converters;
 
 import dev.orme.ludotheque.GamePriceDTO;
 import dev.orme.ludotheque.entities.GamePrice;
+import dev.orme.ludotheque.repositories.GameCopyRepository;
 import dev.orme.ludotheque.repositories.GameRepository;
 import org.springframework.stereotype.Service;
 
@@ -10,12 +11,14 @@ import java.util.UUID;
 @Service
 public class GamePriceConverter implements DtoConvertable<GamePrice, GamePriceDTO> {
 
+    private final GameCopyRepository gameCopyRepository;
     private TimestampConverter timestampConverter;
-    private GameRepository gameRepository;
 
-    public GamePriceConverter(TimestampConverter timestampConverter, GameRepository gameRepository) {
+    public GamePriceConverter(
+            TimestampConverter timestampConverter,
+            GameCopyRepository gameCopyRepository) {
         this.timestampConverter = timestampConverter;
-        this.gameRepository = gameRepository;
+        this.gameCopyRepository = gameCopyRepository;
     }
 
     @Override
@@ -24,7 +27,7 @@ public class GamePriceConverter implements DtoConvertable<GamePrice, GamePriceDT
         if(object == null) return null;
 
         return GamePriceDTO.newBuilder()
-                .setGameId(object.getGame().getId().toString())
+                .setGameCopyId(object.getGameCopy().getId().toString())
                 .setPrice(object.getPrice())
                 .setId(object.getId().toString())
                 .setTimeOfPriceSet(timestampConverter.toDto(object.getTimeOfPriceSet()))
@@ -39,7 +42,7 @@ public class GamePriceConverter implements DtoConvertable<GamePrice, GamePriceDT
         gamePrice.setId(UUID.fromString(gamePriceDTO.getId()));
         gamePrice.setPrice(gamePriceDTO.getPrice());
         gamePrice.setTimeOfPriceSet(timestampConverter.fromDto(gamePriceDTO.getTimeOfPriceSet()));
-        gamePrice.setGame(gameRepository.getFirstById(UUID.fromString(gamePriceDTO.getGameId())));
+        gamePrice.setGameCopy(gameCopyRepository.getFirstById(UUID.fromString(gamePriceDTO.getGameCopyId())));
         return gamePrice;
     }
 }

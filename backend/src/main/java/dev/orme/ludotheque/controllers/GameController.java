@@ -31,11 +31,16 @@ public class GameController {
         return new ResponseEntity<>(new Game(), HttpStatus.CREATED);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Game> getGameById(@PathVariable String id) {
+        var result = gameService.get
+    }
+
     @GetMapping(value = "/")
-    public ResponseEntity<GameListPaginationDTO> getAllGames(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "50") int size) {
+    public ResponseEntity<GameListPaginationDTO> getAllGames(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "40") int size) {
         page--;
         if (page < 0) page = 0;
-        if (size <= 0) size = 50;
+        if (size <= 0) size = 40;
         var result = gameService.getGamePageWithSize(page, size);
         var currentUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                                                     .build()

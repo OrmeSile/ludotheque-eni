@@ -2,15 +2,13 @@
   @if (!userValue.anonymous) {
     <button (click)="fetchGames()">fetch games</button>
     @if (gamelist().length > 0) {
+      <div class="game-list-container">
+      <ul class="game-list">
       @for (game of gamelist(); track game.id) {
-        <div>{{ game.name }}
-          <ul>
-            @for (genre of game.genres; track genre.id){
-              <li>{{genre.name}}</li>
-            }
-          </ul>
-        </div>
+        <app-game-list-item [game]="game"/>
       }
+      </ul>
+      </div>
     }
   }
 }

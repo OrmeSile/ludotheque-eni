@@ -15,22 +15,12 @@ import java.util.UUID;
 public class GameConverter implements DtoConvertable<Game, GameDTO> {
 
     private final GenreConverter genreConverter;
-    private final UserRepository userRepository;
     private final TimestampConverter timestampConverter;
-    private final GamePriceConverter gamePriceConverter;
-    private final RentInformationConverter rentInformationConverter;
 
     public GameConverter(
-            GameRepository gameRepository,
-            UserRepository userRepository,
             TimestampConverter timestampConverter,
-            GamePriceConverter gamePriceConverter,
-            RentInformationConverter rentInformationConverter,
             GenreConverter genreConverter) {
-        this.userRepository = userRepository;
         this.timestampConverter = timestampConverter;
-        this.gamePriceConverter = gamePriceConverter;
-        this.rentInformationConverter = rentInformationConverter;
         this.genreConverter = genreConverter;
     }
 
@@ -45,16 +35,8 @@ public class GameConverter implements DtoConvertable<Game, GameDTO> {
             builder.setName(game.getName());
         if(game.getDescription() != null)
             builder.setDescription(game.getDescription());
-        builder.setIsRented(game.isRented());
-        builder.setIsActive(game.isActive());
         if(game.getTimeOfCreation() != null)
             builder.setTimeOfCreation(timestampConverter.toDto(game.getTimeOfCreation()));
-        if(game.getRenter() != null)
-            builder.setRenterId(game.getRenter().getId().toString());
-        if(game.getGamePrice() != null)
-            builder.setCurrentPrice(gamePriceConverter.toDto(game.getGamePrice()));
-        if(game.getCurrentRentInformation() != null)
-            builder.setCurrentRentInformation(rentInformationConverter.toDto(game.getCurrentRentInformation()));
         if(game.getGenres() != null)
             builder.addAllGenres(game.getGenres().stream().map(genreConverter::toDto).toList());
         return builder.build();
@@ -76,10 +58,6 @@ public class GameConverter implements DtoConvertable<Game, GameDTO> {
                 UUID.fromString(gameDTO.getId()),
                 gameDTO.getName(),
                 gameDTO.getDescription(),
-                gameDTO.getIsRented(),
-                gameDTO.getIsActive(),
-                zonedDateTime,
-                userRepository.getFirstById(UUID.fromString(gameDTO.getRenterId())
-                ));
+                zonedDateTime);
     }
 }

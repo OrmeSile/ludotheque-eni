@@ -18,20 +18,33 @@ message GameDTO {
   string id = 1;
   string name = 2;
   string description = 3;
-  bool isRented = 4;
-  bool isActive = 5;
-  TimestampDTO timeOfCreation = 6;
-  string renterId = 7;
-  GamePriceDTO currentPrice = 8;
-  RentInformationDTO currentRentInformation = 9;
-  repeated GenreDTO genres = 10;
-  repeated GamePriceDTO prices = 11;
-  repeated RentInformationDTO rentInformations = 12;
+  TimestampDTO timeOfCreation = 4;
+  repeated GenreDTO genres = 5;
+  repeated GameCopyDTO copies = 6;
+}
+
+message GameCopyDTO {
+  string id = 1;
+  GameDTO game = 2;
+  RentInformationDTO currentRentInformation = 3;
+  GamePriceDTO currentPrice = 4;
+  repeated RentInformationDTO rentInformation = 5;
+  repeated GamePriceDTO prices = 6;
+  WearStatusDTO wearStatus = 7;
+  bool isRented = 8;
+  bool isActive = 9;
+}
+
+enum WearStatusDTO {
+ MINT = 0;
+ EXCELLENT = 1;
+ USED = 2;
+ DAMAGED = 3;
 }
 
 message GamePriceDTO {
   string id = 1;
-  string gameId = 2;
+  string gameCopyId = 2;
   float price = 3;
   TimestampDTO timeOfPriceSet = 4;
 }
@@ -41,7 +54,7 @@ message RentInformationDTO {
   int32 daysRented = 2;
   GamePriceDTO priceAtRentTime = 3;
   int32 maxRentDaysAtRentTime = 4;
-  string gameId = 5;
+  string gameCopyId = 5;
   string userId = 6;
   TimestampDTO timestampOfRent = 7;
   TimestampDTO timestampOfReturn = 8;
@@ -70,7 +83,8 @@ message RentGameDto {
 message GenreDTO {
   string id = 1;
   string name = 2;
-  repeated GameDTO games = 3;
+  string description = 3;
+  repeated GameDTO games = 4;
 }
 
 message Empty {}
