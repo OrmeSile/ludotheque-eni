@@ -31,7 +31,7 @@ protobuf {
     }
     plugins {
         grpc { artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}" }
-        ts { path = 'D:/code/ludotheque/frontend/node_modules/.bin/protoc-gen-ts_proto.cmd'}
+        ts { path = 'C:/code/ludotheque/frontend/node_modules/.bin/protoc-gen-ts_proto.cmd'}
     }
     generateProtoTasks {
         all().each {task ->

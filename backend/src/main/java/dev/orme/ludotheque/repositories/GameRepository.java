@@ -9,5 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.UUID;
 
 public interface GameRepository extends CrudRepository<Game, UUID>, PagingAndSortingRepository<Game, UUID> {
-    Game getFirstById(UUID id);
+    Game getGameById(UUID id);
+
+    Object findFirstById(UUID id);
 }

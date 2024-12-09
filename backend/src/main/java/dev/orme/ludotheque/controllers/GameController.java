@@ -1,17 +1,20 @@
 package dev.orme.ludotheque.controllers;
 
-import dev.orme.ludotheque.GameDTO;
-import dev.orme.ludotheque.GameListPaginationDTO;
+import dev.orme.ludotheque.*;
 import dev.orme.ludotheque.converters.GameConverter;
 import dev.orme.ludotheque.entities.Game;
 import dev.orme.ludotheque.helpers.PaginationHelper;
+import dev.orme.ludotheque.repositories.NotCreatedException;
+import dev.orme.ludotheque.repositories.NotDeletedException;
+import dev.orme.ludotheque.repositories.NotFoundException;
 import dev.orme.ludotheque.services.GameService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -26,44 +29,57 @@ public class GameController {
         this.gameConverter = gameConverter;
     }
 
-    @PostMapping("/")
-    public ResponseEntity<Game> addGame(@RequestBody GameDTO game) {
-        return new ResponseEntity<>(new Game(), HttpStatus.CREATED);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Game> getGameById(@PathVariable String id) {
-        var result = gameService.get
-    }
-
     @GetMapping(value = "/")
-    public ResponseEntity<GameListPaginationDTO> getAllGames(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "40") int size) {
-        page--;
+    public ResponseEntity<GameListResponse> getAllGames(@RequestParam int page,
+                                                        @RequestParam int pageSize) {
         if (page < 0) page = 0;
-        if (size <= 0) size = 40;
-        var result = gameService.getGamePageWithSize(page, size);
+        if (pageSize <= 0) pageSize = 40;
+        var result = gameService.getGamePageWithSize(page, pageSize);
         var currentUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                                                     .build()
                                                     .toUriString();
-        var gameListDTO = GameListPaginationDTO.newBuilder()
+        var gameListResponse = GameListResponse.newBuilder()
                                                .addAllGames(result.getContent()
                                                                   .stream()
                                                                   .map(gameConverter::toDto)
                                                                   .toList())
                                                .setPage(page + 1)
-                                               .setNext(PaginationHelper.getNextPageUrl(currentUri, result.getTotalPages(), page, size))
-                                               .setPrevious(PaginationHelper.getPreviousPageUrl(currentUri, result.getTotalPages(), page, size))
+                                               .setNext(PaginationHelper.getNextPageUrl(currentUri,
+                                                       result.getTotalPages(), page, pageSize))
+                                               .setPrevious(PaginationHelper.getPreviousPageUrl(currentUri,
+                                                       result.getTotalPages(), page, pageSize))
                                                .setCount(result.getTotalElements())
                                                .setTotalPages(result.getTotalPages())
                                                .build();
-        return new ResponseEntity<>(gameListDTO, HttpStatus.OK);
+        return new ResponseEntity<>(gameListResponse, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/test", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_PROTOBUF_VALUE)
-    public ResponseEntity<GameDTO> addGameTest() {
-        var game = gameService.createGame(new Game());
-        if (game == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to add game");
+    @GetMapping("/{id}")
+    public ResponseEntity<GetGameResponse> getGameById(@PathVariable String id) throws NotFoundException {
+        var result = gameService.getGame(UUID.fromString(id));
+        var dto = GetGameResponse.newBuilder().setGame(gameConverter.toDto(result)).build();
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
 
-        return new ResponseEntity<>(gameConverter.toDto(game), HttpStatus.CREATED);
+    @PostMapping("/")
+    public ResponseEntity<CreateGameResponse> addGame(@RequestBody CreateGameRequest createGameRequest) throws NotCreatedException {
+        if(!createGameRequest.getGame().getId().isBlank()) {
+            throw new NotCreatedException(Game.class);
+        }
+        var createdGame = gameService.createGame(gameConverter.fromDto(createGameRequest.getGame()));
+        return new ResponseEntity<>(CreateGameResponse.newBuilder().setGame(gameConverter.toDto(createdGame)).build(), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UpdateGameResponse> updateGame(@PathVariable String id, @RequestBody GameDTO game) throws NotFoundException {
+        var result = gameService.updateGame(UUID.fromString(id), gameConverter.fromDto(game));
+        var dto = UpdateGameResponse.newBuilder().setGame(gameConverter.toDto(result)).build();
+        return new ResponseEntity<>( dto, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteGame(@PathVariable String id) throws NotDeletedException {
+        gameService.deleteGame(UUID.fromString(id));
+        return ResponseEntity.noContent().build();
     }
 }

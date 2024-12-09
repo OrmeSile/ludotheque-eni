@@ -29,7 +29,6 @@ spring:
       preferred-json-mapper: gson
   gson:
     enable-complex-map-key-serialization: true
-    serialize-nulls: true
   sql:
     init:
       mode: always

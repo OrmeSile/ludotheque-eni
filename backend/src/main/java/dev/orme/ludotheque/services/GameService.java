@@ -1,15 +1,12 @@
 package dev.orme.ludotheque.services;
 
 import dev.orme.ludotheque.entities.Game;
-import dev.orme.ludotheque.repositories.GameRepository;
-import dev.orme.ludotheque.repositories.RentInformationRepository;
-import dev.orme.ludotheque.repositories.UserRepository;
+import dev.orme.ludotheque.repositories.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.UUID;
 
 @Service
 public class GameService {
@@ -25,11 +22,41 @@ public class GameService {
     }
 
     public Game createGame(Game game) {
-        return this.gameRepository.save(game);
+        try {
+            return this.gameRepository.save(game);
+        }catch (IllegalArgumentException e){
+            throw new NotCreatedException(Game.class);
+        }
+    }
+
+    public Game getGame(UUID uuid) throws NotFoundException {
+        var game = this.gameRepository.findById(uuid);
+        if(game.isEmpty()) {
+            throw new NotFoundException(Game.class);
+        }
+        return game.get();
     }
 
     public Page<Game> getGamePageWithSize(int page, int size) {
         return gameRepository.findAll(PageRequest.of(page, size));
+    }
 
+    public Game updateGame (UUID id, Game game) {
+        if(game.getId() == null) {
+            game.setId(id);
+        }
+        try {
+            return gameRepository.save(game);
+        }catch (IllegalArgumentException e){
+            throw new NotUpdatedException(Game.class);
+        }
+    }
+
+    public void deleteGame(UUID id) {
+        if(gameRepository.existsById(id)) {
+            gameRepository.deleteById(id);
+            return;
+        }
+        throw new NotDeletedException(Game.class);
     }
 }

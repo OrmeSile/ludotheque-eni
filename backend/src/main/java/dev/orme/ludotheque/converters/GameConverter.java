@@ -2,8 +2,6 @@ package dev.orme.ludotheque.converters;
 
 import dev.orme.ludotheque.GameDTO;
 import dev.orme.ludotheque.entities.Game;
-import dev.orme.ludotheque.repositories.GameRepository;
-import dev.orme.ludotheque.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -26,18 +24,18 @@ public class GameConverter implements DtoConvertable<Game, GameDTO> {
 
     @Override
     public GameDTO toDto(Game game) {
-        if(game == null) return null;
+        if (game == null) return null;
 
         var builder = GameDTO.newBuilder();
-        if(game.getId() != null)
+        if (game.getId() != null)
             builder.setId(game.getId().toString());
-        if(game.getName() != null)
+        if (game.getName() != null)
             builder.setName(game.getName());
-        if(game.getDescription() != null)
+        if (game.getDescription() != null)
             builder.setDescription(game.getDescription());
-        if(game.getTimeOfCreation() != null)
+        if (game.getTimeOfCreation() != null)
             builder.setTimeOfCreation(timestampConverter.toDto(game.getTimeOfCreation()));
-        if(game.getGenres() != null)
+        if (game.getGenres() != null)
             builder.addAllGenres(game.getGenres().stream().map(genreConverter::toDto).toList());
         return builder.build();
     }
@@ -47,13 +45,19 @@ public class GameConverter implements DtoConvertable<Game, GameDTO> {
 
         var zonedDateTime = ZonedDateTime
                 .ofInstant(Instant
-                        .ofEpochSecond(
-                                gameDTO.getTimeOfCreation().getSeconds(),
-                                gameDTO.getTimeOfCreation().getNanos()
-                        ),
+                                .ofEpochSecond(
+                                        gameDTO.getTimeOfCreation().getSeconds(),
+                                        gameDTO.getTimeOfCreation().getNanos()
+                                ),
                         ZoneId.systemDefault()
 
                 );
+        if (gameDTO.getId().isBlank()) {
+            return new Game(
+                    gameDTO.getName(),
+                    gameDTO.getDescription(),
+                    zonedDateTime);
+        }
         return new Game(
                 UUID.fromString(gameDTO.getId()),
                 gameDTO.getName(),

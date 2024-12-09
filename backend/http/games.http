@@ -19,3 +19,25 @@ Authorization: Bearer {{$auth.token("spring-resource-oauth")}}
 
 ###
 
+GET http://localhost:8081/game/71b6f540-a59b-4bc7-8f62-9a27aff568e4
+Accept: application/x-protobuf
+Content-Type: application/x-protobuf
+Authorization: Bearer {{$auth.token("spring-resource-oauth")}}
+
+###
+
+PUT http://localhost:8081/game/71b6f540-a59b-4bc7-8f62-9a27aff568e4
+Accept: application/x-protobuf
+Content-Type: application/json
+Authorization: Bearer {{$auth.token("spring-resource-oauth")}}
+
+{
+"name": "test"
+}
+
+###
+
+DELETE http://localhost:8081/game/71b6f540-a59b-4bc7-8f62-9a27aff568e4
+Accept: application/x-protobuf
+Content-Type: application/json
+Authorization: Bearer {{$auth.token("spring-resource-oauth")}}

@@ -5,13 +5,33 @@ option java_multiple_files = true;
 option java_package = "dev.orme.ludotheque";
 option java_outer_classname = "LudothequeProtos";
 
-message GameListPaginationDTO {
+message GameListResponse {
   int32 page = 1;
   int32 totalPages = 2;
   int64 count = 3;
   string previous = 4;
   string next = 5;
   repeated GameDTO games = 6;
+}
+
+message GetGameResponse {
+  GameDTO game = 1;
+}
+
+message CreateGameRequest {
+  GameDTO game = 1;
+}
+
+message CreateGameResponse {
+  GameDTO game = 1;
+}
+
+message UpdateGameRequest {
+  GameDTO game = 1;
+}
+
+message UpdateGameResponse {
+  GameDTO game = 1;
 }
 
 message GameDTO {
