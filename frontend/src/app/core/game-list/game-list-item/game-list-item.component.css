@@ -1,27 +1,33 @@
 #root {
-  position: relative;
+  position: absolute;
 }
 .game-item {
+  z-index: 1000;
   position: relative;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   flex-flow: column nowrap;
-  padding: 0.1rem 1rem;
   border: solid #DDD 1px;
-  border-radius: 1rem;
-  background: #FAFAFA;
-  box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.3);
-  height: 5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
+  height: 10rem;
   overflow: hidden;
+  min-width: 1fr;
+  background: rgba(255,255,255,0.5);
+  backdrop-filter: blur(0.1rem);
 }
+
 .game-item:hover {
-  transition: box-shadow 0.3s, background 0.5s;
+  z-index: 2000;
+  position: relative;
+  width: 102%;
+  height: 102%;
+  top: -1%;
+  left: -1%;
+  transition: box-shadow 0.2s ease-in, width 0.2s ease-in-out, height 0.2s ease-in-out, top 0.2s ease-in-out, left 0.2s ease-in-out;
   box-shadow: 0 0.3rem 0.5rem rgba(0, 0, 0, 0.4);
-  background: #EFE;
+  backdrop-filter: blur(0.4rem) saturate(2);
   cursor: pointer;
-  overflow: visible;
-  z-index: 1;
   & .genre-list {
     visibility: visible;
   }
@@ -30,8 +36,10 @@
   padding: 0;
   margin: 0;
   font-size: 1.2rem;
+  height: 3rem;
+  align-items: center;
   width: 100%;
-  background: #EEE;
+  background: linear-gradient(180deg, #FFFFFF 0%, rgba(255,255,255, 0.5) 90%, rgba(255,255,255,0) 100%);
   display: flex;
   justify-content: center;
 }

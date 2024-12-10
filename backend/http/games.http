@@ -19,6 +19,13 @@ Authorization: Bearer {{$auth.token("spring-resource-oauth")}}
 
 ###
 
+GET http://localhost:8081/game/http://localhost:8081/?page=2&pageSize=40
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{$auth.token("spring-resource-oauth")}}
+
+###
+
 GET http://localhost:8081/game/71b6f540-a59b-4bc7-8f62-9a27aff568e4
 Accept: application/x-protobuf
 Content-Type: application/x-protobuf

@@ -1,0 +1,8 @@
+@if(data().length > 0){
+  <table>
+  <app-data-table-header class="header row" [headerData]="data()[0]"/>
+  @for (dataRow of data(); track dataRow) {
+    <app-data-table-row class= "row" [rowData]="dataRow"/>
+  }
+  </table>
+}

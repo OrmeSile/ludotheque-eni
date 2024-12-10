@@ -12,5 +12,5 @@ Authorization: Bearer {{$auth.token("spring-resource-oauth")}}
 
 {
   "userId": "320ed3df-6708-40ce-8d2b-b2747365cd0c",
-  "gameCopyId": "9dcb8d03-94a4-4c35-96f7-340bebd05b70"
+  "gameCopyId": "89cf364a-5732-44b0-a53c-3ae09a78ba6a"
 }

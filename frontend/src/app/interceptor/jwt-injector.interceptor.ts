@@ -1,4 +1,4 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+  import { HttpInterceptorFn } from '@angular/common/http';
 import {inject} from '@angular/core';
 import {SecurityStore} from '../shared/security/security-store.service';
 
@@ -7,11 +7,11 @@ export const securityInterceptor: HttpInterceptorFn = (req, next) => {
 
   const bearer = keycloakService.user()?.bearer;
 
+  console.log("passed in interceptor ?")
+
   if (!bearer) {
     return next(req);
   }
-
-  console.log("passed in interceptor ?")
 
   return next(
     req.clone({

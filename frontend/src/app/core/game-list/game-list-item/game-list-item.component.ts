@@ -1,4 +1,4 @@
-import {Component, computed, input, signal, WritableSignal} from '@angular/core';
+import {Component, computed, input, output, signal, WritableSignal} from '@angular/core';
 import {GameDTO} from '../../../../proto/generated/ludotheque';
 
 @Component({

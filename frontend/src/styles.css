@@ -8,3 +8,21 @@
 ul {
   padding: 0;
 }
+
+:root{
+  --background: #FAFAFA;
+  --blue-primary: #0277bd;
+  --blue-secondary: #03a9f4;
+  --blue-tertiary: #81d4fa;
+  --blue-quaternary: #bbdefb;
+  --red-primary: #d32f2f;
+  --red-secondary: #f44336;
+  --red-tertiary: #e57373;
+  --green-primary: #2e7d32;
+  --green-secondary: #4caf50;
+  --green-tertiary: #a5d6a7;
+  --green-quaternary: #c8e6c9;
+  --yellow-primary: #ff8f00;
+  --yellow-secondary: #ffc107;
+  --yellow-tertiary: #ffe082;
+}

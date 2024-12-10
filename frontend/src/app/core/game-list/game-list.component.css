@@ -1,4 +1,5 @@
 .game-list {
+  position: relative;
   list-style: none;
   border: dashed red 1px;
   width: 100%;
@@ -8,12 +9,12 @@
   padding: 0;
   margin: 0;
   gap: 0.5rem;
-  background: #EEE;
+  background: linear-gradient(60deg, var(--blue-tertiary) 0%, var(--green-tertiary) 100%);
   @media (min-width: 840px){
     display: grid;
     grid-template-columns: 1fr 1fr;
   }
   @media (min-width: 1280px){
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(6,1fr);
   }
 }

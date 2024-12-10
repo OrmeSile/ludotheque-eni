@@ -11,6 +11,7 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -29,6 +30,7 @@ public class GameController {
         this.gameConverter = gameConverter;
     }
 
+    @PreAuthorize("hasRole('ROLE_VIEW_GAMES')")
     @GetMapping(value = "/")
     public ResponseEntity<GameListResponse> getAllGames(@RequestParam(required = false, defaultValue = "0") int page,
                                                         @RequestParam(required = false, defaultValue = "40") int pageSize) throws NotFoundException {
@@ -44,7 +46,7 @@ public class GameController {
                         .map(gameConverter::toDto)
                         .toList())
                 .setPage(page + 1)
-                .setNext(PaginationHelper.getNextPageUrl(currentUri,
+                .setNext(PaginationHelper.getNextPageUrl(
                         result.getTotalPages(), page, pageSize))
                 .setPrevious(PaginationHelper.getPreviousPageUrl(currentUri,
                         result.getTotalPages(), page, pageSize))
@@ -54,6 +56,7 @@ public class GameController {
         return new ResponseEntity<>(gameListResponse, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ROLE_VIEW_GAMES')")
     @GetMapping("/{id}")
     public ResponseEntity<GetGameResponse> getGameById(@PathVariable String id) throws NotFoundException {
         var result = gameService.getGame(UUID.fromString(id));
@@ -61,6 +64,7 @@ public class GameController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ROLE_CREATE_GAMES')")
     @PostMapping("/")
     public ResponseEntity<CreateGameResponse> addGame(@RequestBody CreateGameRequest createGameRequest) throws NotCreatedException, BadRequestException {
         if (!createGameRequest.hasGame() || createGameRequest.getGame().getId().isBlank())
@@ -69,6 +73,7 @@ public class GameController {
         return new ResponseEntity<>(CreateGameResponse.newBuilder().setGame(gameConverter.toDto(createdGame)).build(), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ROLE_EDIT_GAMES')")
     @PutMapping("/{id}")
     public ResponseEntity<UpdateGameResponse> updateGame(@PathVariable String id, @RequestBody GameDTO game) throws NotUpdatedException, NotFoundException {
         var result = gameService.updateGame(UUID.fromString(id), gameConverter.fromDto(game));
@@ -76,6 +81,7 @@ public class GameController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ROLE_DELETE_GAMES')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteGame(@PathVariable String id) throws NotFoundException {
         gameService.deleteGame(UUID.fromString(id));

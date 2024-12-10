@@ -10,7 +10,7 @@ import {GameListService} from '../../admin/games/game-list.service';
 })
 export class GamePageComponent {
   id = input("");
-  game: WritableSignal<GameDTO | undefined> = signal();
+  game: WritableSignal<GameDTO | undefined> = signal(undefined);
   gameService = inject(GameListService)
 
 }

@@ -5,7 +5,16 @@
       <div class="game-list-container">
       <ul class="game-list">
       @for (game of gamelist(); track game.id) {
-        <app-game-list-item [game]="game"/>
+        @if($last){
+          <app-game-list-item
+            [game]="game"
+            appIntersection
+            (isIntersecting) ="isIntersecting($event)"
+            [isContinuous] ="true"
+          />
+        }@else{
+          <app-game-list-item [game]="game"/>
+        }
       }
       </ul>
       </div>

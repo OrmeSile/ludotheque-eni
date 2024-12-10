@@ -1,0 +1,11 @@
+@for (value of Object.values(rowData()); track value) {
+  <td>
+  @if (typeof value === "object") {
+    @for (entry of Object.entries(value); track entry){
+      <div [innerHtml]="extractIntrospectedValues(entry[1])"></div>
+    }
+  }@else{
+    {{value}}
+  }
+  </td>
+}
