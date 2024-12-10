@@ -34,6 +34,27 @@ message UpdateGameResponse {
   GameDTO game = 1;
 }
 
+message RentGameRequest {
+  string gameCopyId = 1;
+  string userId = 2;
+}
+
+message RentGameResponse {
+  GameCopyDTO rentedGame = 1;
+}
+
+message GetRentableGamesResponse {
+  repeated GameCopyDTO rentableGames = 1;
+}
+
+message GetRentedGamesResponse {
+  repeated GameCopyDTO rentedGames = 1;
+}
+
+message GetAllUsersResponse {
+  repeated UserDTO users = 1;
+}
+
 message GameDTO {
   string id = 1;
   string name = 2;
@@ -108,3 +129,8 @@ message GenreDTO {
 }
 
 message Empty {}
+
+message ErrorResponse {
+  int32 code = 1;
+  string error = 2;
+}

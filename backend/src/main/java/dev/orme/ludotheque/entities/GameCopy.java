@@ -2,6 +2,7 @@ package dev.orme.ludotheque.entities;
 
 import jakarta.persistence.*;
 
+import java.time.ZonedDateTime;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -26,6 +27,7 @@ public class GameCopy implements Comparable<GameCopy> {
     private boolean isRented;
     private boolean isActive;
     private int maxRentDays = 0;
+    private ZonedDateTime timeOfStockEntry;
 
     public GameCopy() {
     }
@@ -40,11 +42,28 @@ public class GameCopy implements Comparable<GameCopy> {
         this.wearStatus = wearStatus;
         this.isRented = isRented;
         this.isActive = isActive;
+        this.timeOfStockEntry = ZonedDateTime.now();
+    }
+
+    public GameCopy(Game game, RentInformation currentRentInformation, GamePrice currentGamePrice, SortedSet<RentInformation> rentInformations, SortedSet<GamePrice> gamePrices, WearStatus wearStatus, boolean isRented, boolean isActive) {
+        this.game = game;
+        this.currentRentInformation = currentRentInformation;
+        this.currentGamePrice = currentGamePrice;
+        this.rentInformations = rentInformations;
+        this.gamePrices = gamePrices;
+        this.wearStatus = wearStatus;
+        this.isRented = isRented;
+        this.isActive = isActive;
+        this.timeOfStockEntry = ZonedDateTime.now();
     }
 
     @Override
     public int compareTo(GameCopy o) {
-        return this.currentRentInformation.getTimeOfRent().compareTo(o.currentRentInformation.getTimeOfRent());
+        return this.timeOfStockEntry.compareTo(o.getTimeOfStockEntry());
+    }
+
+    public ZonedDateTime getTimeOfStockEntry() {
+        return timeOfStockEntry;
     }
 
     public int getMaxRentDays() {
@@ -125,5 +144,17 @@ public class GameCopy implements Comparable<GameCopy> {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public void addRentInformation(RentInformation rentInformation) {
+        rentInformations.add(rentInformation);
+    }
+
+    @PostLoad
+    public void postLoad() {
+        if (!this.gamePrices.isEmpty())
+            setCurrentGamePrice(this.gamePrices.first());
+        if (!this.rentInformations.isEmpty())
+            setCurrentRentInformation(this.rentInformations.first());
     }
 }

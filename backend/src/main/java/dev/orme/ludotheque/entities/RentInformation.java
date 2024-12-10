@@ -20,15 +20,34 @@ public class RentInformation implements Comparable<RentInformation> {
     private WearStatus wearStatus;
     @ManyToOne
     private GameCopy gameCopy;
-    @OneToOne
+    @ManyToOne
     private GamePrice priceAtRentTime;
 
     @ManyToOne
     private User user;
 
+    public RentInformation(int daysRented,
+                           int maxRentDaysAtRentTime,
+                           WearStatus wearStatus,
+                           GameCopy gameCopy,
+                           User user,
+                           GamePrice priceAtRentTime,
+                           ZonedDateTime timeOfRent,
+                           ZonedDateTime timeOfReturn) {
+        this.daysRented = daysRented;
+        this.maxRentDaysAtRentTime = maxRentDaysAtRentTime;
+        this.timeOfRent = timeOfRent;
+        this.wearStatus = wearStatus;
+        this.gameCopy = gameCopy;
+        this.priceAtRentTime = priceAtRentTime;
+        this.user = user;
+        this.timeOfReturn = timeOfReturn;
+    }
+
     public RentInformation(UUID id,
                            int daysRented,
                            int maxRentDaysAtRentTime,
+                           WearStatus wearStatus,
                            GameCopy gameCopy,
                            User user,
                            GamePrice priceAtRentTime,
@@ -37,6 +56,7 @@ public class RentInformation implements Comparable<RentInformation> {
         this.id = id;
         this.daysRented = daysRented;
         this.maxRentDaysAtRentTime = maxRentDaysAtRentTime;
+        this.wearStatus = wearStatus;
         this.timeOfRent = timeOfRent;
         this.gameCopy = gameCopy;
         this.priceAtRentTime = priceAtRentTime;
@@ -114,5 +134,13 @@ public class RentInformation implements Comparable<RentInformation> {
 
     public void setGameCopy(GameCopy gameCopy) {
         this.gameCopy = gameCopy;
+    }
+
+    public WearStatus getWearStatus() {
+        return wearStatus;
+    }
+
+    public void setWearStatus(WearStatus wearStatus) {
+        this.wearStatus = wearStatus;
     }
 }

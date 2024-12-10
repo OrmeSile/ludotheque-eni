@@ -21,42 +21,50 @@ public class GameService {
         this.rentInformationRepository = rentInformationRepository;
     }
 
-    public Game createGame(Game game) {
+    public Game createGame(Game game) throws NotCreatedException {
+        if(gameRepository.existsById(game.getId())) {
+            throw new NotCreatedException("game", game.getId());
+        }
         try {
             return this.gameRepository.save(game);
         }catch (IllegalArgumentException e){
-            throw new NotCreatedException(Game.class);
+            throw new NotCreatedException("game", game.getId());
         }
     }
 
     public Game getGame(UUID uuid) throws NotFoundException {
         var game = this.gameRepository.findById(uuid);
         if(game.isEmpty()) {
-            throw new NotFoundException(Game.class);
+            throw new NotFoundException("game", uuid);
         }
         return game.get();
     }
 
-    public Page<Game> getGamePageWithSize(int page, int size) {
-        return gameRepository.findAll(PageRequest.of(page, size));
+    public Page<Game> getGamePageWithSize(int page, int size) throws NotFoundException {
+        var pageResponse = gameRepository.findAll(PageRequest.of(page, size));
+        if(pageResponse.hasContent())
+            return pageResponse;
+        throw new NotFoundException("game");
     }
 
-    public Game updateGame (UUID id, Game game) {
+    public Game updateGame (UUID id, Game game) throws NotUpdatedException, NotFoundException {
+        if(id == null || !gameRepository.existsById(id))
+            throw new NotFoundException("game", id);
         if(game.getId() == null) {
             game.setId(id);
         }
         try {
             return gameRepository.save(game);
-        }catch (IllegalArgumentException e){
-            throw new NotUpdatedException(Game.class);
+        }catch (Exception e){
+            throw new NotUpdatedException("game", id);
         }
     }
 
-    public void deleteGame(UUID id) {
+    public void deleteGame(UUID id) throws NotFoundException {
         if(gameRepository.existsById(id)) {
             gameRepository.deleteById(id);
             return;
         }
-        throw new NotDeletedException(Game.class);
+        throw new NotFoundException("game", id);
     }
 }

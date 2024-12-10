@@ -2,7 +2,6 @@ package dev.orme.ludotheque.converters;
 
 import dev.orme.ludotheque.WearStatusDTO;
 import dev.orme.ludotheque.entities.WearStatus;
-import org.checkerframework.dataflow.qual.Pure;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,6 +9,8 @@ public class WearStatusConverter implements DtoConvertable<WearStatus, WearStatu
 
     @Override
     public WearStatusDTO toDto(WearStatus object) {
+        if (object == null) return null;
+
         return switch (object) {
             case MINT -> WearStatusDTO.MINT;
             case EXCELLENT -> WearStatusDTO.EXCELLENT;
@@ -20,6 +21,8 @@ public class WearStatusConverter implements DtoConvertable<WearStatus, WearStatu
 
     @Override
     public WearStatus fromDto(WearStatusDTO wearStatusDTO) {
+        if (wearStatusDTO == null) return null;
+
         return switch (wearStatusDTO) {
             case MINT -> WearStatus.MINT;
             case EXCELLENT -> WearStatus.EXCELLENT;

@@ -42,6 +42,7 @@ public class GameConverter implements DtoConvertable<Game, GameDTO> {
 
     @Override
     public Game fromDto(GameDTO gameDTO) {
+        if(gameDTO == null) return null;
 
         var zonedDateTime = ZonedDateTime
                 .ofInstant(Instant

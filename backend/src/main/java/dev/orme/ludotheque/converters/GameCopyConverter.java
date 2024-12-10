@@ -26,37 +26,45 @@ public class GameCopyConverter implements DtoConvertable<GameCopy, GameCopyDTO> 
 
     @Override
     public GameCopyDTO toDto(GameCopy object) {
-        return GameCopyDTO.newBuilder()
-                          .setId(object.getId()
-                                       .toString())
-                          .setGame(gameConverter.toDto(object.getGame()))
-                          .setCurrentPrice(gamePriceConverter.toDto(object.getCurrentGamePrice()))
-                          .setCurrentRentInformation(rentInformationConverter.toDto(object.getCurrentRentInformation()))
-                          .setIsRented(object.isRented())
-                          .setIsActive(object.isActive())
-                          .addAllPrices(object.getGamePrices()
-                                              .stream()
-                                              .map(gamePriceConverter::toDto)
-                                              .toList())
-                          .addAllRentInformation(object.getRentInformations()
-                                                       .stream()
-                                                       .map(rentInformationConverter::toDto)
-                                                       .toList())
-                          .build();
+        if (object == null) return null;
+
+        var gameCopy = GameCopyDTO.newBuilder()
+                .setId(object.getId()
+                        .toString())
+                .setGame(gameConverter.toDto(object.getGame()))
+                .setIsRented(object.isRented())
+                .setIsActive(object.isActive())
+                .addAllPrices(object.getGamePrices()
+                        .stream()
+                        .map(gamePriceConverter::toDto)
+                        .toList())
+                .addAllRentInformation(object.getRentInformations()
+                        .stream()
+                        .map(rentInformationConverter::toDto)
+                        .toList());
+        if(object.getCurrentGamePrice() != null)
+            gameCopy.setCurrentPrice(gamePriceConverter.toDto(object.getCurrentGamePrice()));
+        if(object.getCurrentRentInformation() != null)
+            gameCopy.setCurrentRentInformation(rentInformationConverter.toDto(object.getCurrentRentInformation()));
+
+        return gameCopy.build();
     }
 
     @Override
     public GameCopy fromDto(GameCopyDTO gameCopyDTO) {
-        return new GameCopy(
-                UUID.fromString(gameCopyDTO.getId()),
-                gameConverter.fromDto(gameCopyDTO.getGame()),
-                rentInformationConverter.fromDto(gameCopyDTO.getCurrentRentInformation()),
-                gamePriceConverter.fromDto(gameCopyDTO.getCurrentPrice()),
-                gameCopyDTO.getRentInformationList().stream().map(rentInformationConverter::fromDto).collect(Collectors.toCollection(TreeSet::new)),
-                gameCopyDTO.getPricesList().stream().map(gamePriceConverter::fromDto).collect(Collectors.toCollection(TreeSet::new)),
-                wearStatusConverter.fromDto(gameCopyDTO.getWearStatus()),
-                gameCopyDTO.getIsRented(),
-                gameCopyDTO.getIsActive()
-                );
+        if (gameCopyDTO == null) return null;
+
+        var gameCopy = new GameCopy();
+        if(!gameCopyDTO.getId().isBlank())
+            gameCopy.setId(UUID.fromString(gameCopyDTO.getId()));
+        gameCopy.setCurrentRentInformation(rentInformationConverter.fromDto(gameCopyDTO.getCurrentRentInformation()));
+        gameCopy.setGame(gameConverter.fromDto(gameCopyDTO.getGame()));
+        gameCopy.setCurrentGamePrice(gamePriceConverter.fromDto(gameCopyDTO.getCurrentPrice()));
+        gameCopy.setRentInformations(gameCopyDTO.getRentInformationList().stream().map(rentInformationConverter::fromDto).collect(Collectors.toCollection(TreeSet::new)));
+        gameCopy.setGamePrices(gameCopyDTO.getPricesList().stream().map(gamePriceConverter::fromDto).collect(Collectors.toCollection(TreeSet::new)));
+        gameCopy.setWearStatus(wearStatusConverter.fromDto(gameCopyDTO.getWearStatus()));
+        gameCopy.setRented(gameCopyDTO.getIsRented());
+        gameCopy.setActive(gameCopyDTO.getIsActive());
+        return gameCopy;
     }
 }

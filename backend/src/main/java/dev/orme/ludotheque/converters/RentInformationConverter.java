@@ -27,7 +27,7 @@ public class RentInformationConverter implements DtoConvertable<RentInformation,
     public RentInformationDTO toDto(RentInformation object) {
         if (object == null) return null;
 
-        return RentInformationDTO.newBuilder()
+        var rentInformationBuilder = RentInformationDTO.newBuilder()
                                  .setId(object.getId()
                                               .toString())
                                  .setDaysRented(object.getDaysRented())
@@ -39,25 +39,29 @@ public class RentInformationConverter implements DtoConvertable<RentInformation,
                                  .setUserId(object.getUser()
                                                   .getId()
                                                   .toString())
-                                 .setTimestampOfRent(timestampConverter.toDto(object.getTimeOfRent()))
-                                 .setTimestampOfReturn(timestampConverter.toDto(object.getTimeOfReturn()))
-                                 .build();
+                                 .setTimestampOfRent(timestampConverter.toDto(object.getTimeOfRent()));
+        if(object.getTimeOfReturn() != null)
+             rentInformationBuilder.setTimestampOfReturn(timestampConverter.toDto(object.getTimeOfReturn()));
+        return rentInformationBuilder.build();
     }
 
     @Override
     public RentInformation fromDto(RentInformationDTO rentInformationDTO) {
         if (rentInformationDTO == null) return null;
 
-        return new RentInformation(
-                UUID.fromString(rentInformationDTO.getId()),
-                rentInformationDTO.getDaysRented(),
-                rentInformationDTO.getMaxRentDaysAtRentTime(),
-                gameCopyRepository.getFirstById(
-                        UUID.fromString(rentInformationDTO.getGameCopyId())
-                ),
-                userRepository.getFirstById(
-                        UUID.fromString(rentInformationDTO.getUserId())),
-                gamePriceConverter.fromDto(rentInformationDTO.getPriceAtRentTime()), timestampConverter.fromDto(rentInformationDTO.getTimestampOfRent()), timestampConverter.fromDto(rentInformationDTO.getTimestampOfReturn())
-                );
+        var rentInformation = new RentInformation();
+        if(!rentInformationDTO.getId().isBlank())
+            rentInformation.setId(UUID.fromString(rentInformationDTO.getId()));
+        rentInformation.setDaysRented(rentInformationDTO.getDaysRented());
+        rentInformation.setMaxRentDaysAtRentTime(rentInformationDTO.getMaxRentDaysAtRentTime());
+        rentInformation.setGameCopy(gameCopyRepository.getFirstById(
+            UUID.fromString(rentInformationDTO.getGameCopyId())
+        ));
+        if(!rentInformationDTO.getUserId().isBlank())
+            rentInformation.setUser(userRepository.getFirstById(UUID.fromString(rentInformationDTO.getUserId())));
+        rentInformation.setPriceAtRentTime(gamePriceConverter.fromDto(rentInformationDTO.getPriceAtRentTime()));
+        rentInformation.setTimeOfRent(timestampConverter.fromDto(rentInformationDTO.getTimestampOfRent()));
+        rentInformation.setTimeOfReturn(timestampConverter.fromDto(rentInformationDTO.getTimestampOfReturn()));
+        return rentInformation;
     }
 }

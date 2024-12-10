@@ -1,9 +1,9 @@
 package dev.orme.ludotheque.repositories;
 
-import java.lang.reflect.Type;
+import java.util.UUID;
 
-public class NotCreatedException extends RuntimeException {
-    public NotCreatedException(Type t) {
-        super(String.format("%s was not created", t));
+public class NotCreatedException extends Exception {
+    public NotCreatedException(String type, UUID id) {
+        super(String.format("%s was not created : %s already exists", type, id));
     }
 }

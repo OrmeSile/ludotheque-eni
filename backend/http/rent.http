@@ -1,0 +1,16 @@
+POST http://localhost:8081/rent/
+Accept: application/x-protobuf
+Content-Type: application/x-protobuf
+Authorization: Bearer {{$auth.token("spring-resource-oauth")}}
+
+###
+
+POST http://localhost:8081/rent/
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{$auth.token("spring-resource-oauth")}}
+
+{
+  "userId": "320ed3df-6708-40ce-8d2b-b2747365cd0c",
+  "gameCopyId": "9dcb8d03-94a4-4c35-96f7-340bebd05b70"
+}

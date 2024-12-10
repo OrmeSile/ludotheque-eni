@@ -3,6 +3,7 @@ package dev.orme.ludotheque.entities;
 import jakarta.persistence.*;
 
 import java.time.ZonedDateTime;
+import java.util.SortedSet;
 import java.util.UUID;
 
 @Entity(name="game_price")
@@ -14,8 +15,8 @@ public class GamePrice implements Comparable<GamePrice> {
 
     private float price = 0.0f;
     private ZonedDateTime timeOfPriceSet;
-    @ManyToOne
-    private RentInformation rentInformation;
+    @OneToMany(mappedBy = "priceAtRentTime")
+    private SortedSet<RentInformation> rentInformation;
     @ManyToOne
     private GameCopy gameCopy;
 
@@ -57,11 +58,11 @@ public class GamePrice implements Comparable<GamePrice> {
         this.gameCopy = gameCopy;
     }
 
-    public RentInformation getRentInformation() {
+    public SortedSet<RentInformation> getRentInformation() {
         return rentInformation;
     }
 
-    public void setRentInformation(RentInformation rentInformation) {
+    public void setRentInformation(SortedSet<RentInformation> rentInformation) {
         this.rentInformation = rentInformation;
     }
 }
