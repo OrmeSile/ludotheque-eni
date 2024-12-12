@@ -33,11 +33,12 @@ public class Game implements Comparable<Game> {
     }
 
     public Game(UUID id, String name, String description,
-                ZonedDateTime timeOfCreation) {
+                ZonedDateTime timeOfCreation, int yearPublished) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.timeOfCreation = timeOfCreation;
+        this.yearPublished = yearPublished;
     }
 
     public UUID getId() {

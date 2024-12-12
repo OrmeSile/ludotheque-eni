@@ -37,6 +37,8 @@ public class GameConverter implements DtoConvertable<Game, GameDTO> {
             builder.setTimeOfCreation(timestampConverter.toDto(game.getTimeOfCreation()));
         if (game.getGenres() != null)
             builder.addAllGenres(game.getGenres().stream().map(genreConverter::toDto).toList());
+        if(game.getYearPublished() != 0)
+            builder.setYearPublished(game.getYearPublished());
         return builder.build();
     }
 
@@ -44,15 +46,8 @@ public class GameConverter implements DtoConvertable<Game, GameDTO> {
     public Game fromDto(GameDTO gameDTO) {
         if(gameDTO == null) return null;
 
-        var zonedDateTime = ZonedDateTime
-                .ofInstant(Instant
-                                .ofEpochSecond(
-                                        gameDTO.getTimeOfCreation().getSeconds(),
-                                        gameDTO.getTimeOfCreation().getNanos()
-                                ),
-                        ZoneId.systemDefault()
+        var zonedDateTime = timestampConverter.fromDto(gameDTO.getTimeOfCreation());
 
-                );
         if (gameDTO.getId().isBlank()) {
             return new Game(
                     gameDTO.getName(),
@@ -63,6 +58,7 @@ public class GameConverter implements DtoConvertable<Game, GameDTO> {
                 UUID.fromString(gameDTO.getId()),
                 gameDTO.getName(),
                 gameDTO.getDescription(),
-                zonedDateTime);
+                zonedDateTime,
+                gameDTO.getYearPublished());
     }
 }

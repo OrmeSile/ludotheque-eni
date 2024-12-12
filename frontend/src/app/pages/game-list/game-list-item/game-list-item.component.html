@@ -1,5 +1,5 @@
 @if (game()) {
-  <li class="game-item">
+  <li class="game-item" (click)="goToGamePage(gameId())">
     <h3 class="name">{{ name() }}</h3>
     <ul class="genre-list">
       @for (genre of genres(); track genre.id) {

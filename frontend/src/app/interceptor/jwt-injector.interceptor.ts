@@ -7,8 +7,6 @@ export const securityInterceptor: HttpInterceptorFn = (req, next) => {
 
   const bearer = keycloakService.user()?.bearer;
 
-  console.log("passed in interceptor ?")
-
   if (!bearer) {
     return next(req);
   }

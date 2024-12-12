@@ -13,7 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.UUID;
 
@@ -30,8 +29,7 @@ public class GameController {
         this.gameConverter = gameConverter;
     }
 
-    @PreAuthorize("hasRole('ROLE_VIEW_GAMES')")
-    @GetMapping(value = "/")
+    @GetMapping(value = "")
     public ResponseEntity<GameListResponse> getAllGames(@RequestParam(required = false, defaultValue = "0") int page,
                                                         @RequestParam(required = false, defaultValue = "40") int pageSize) throws NotFoundException {
         if (page < 0) page = 0;
@@ -42,7 +40,7 @@ public class GameController {
                         .stream()
                         .map(gameConverter::toDto)
                         .toList())
-                .setPage(page + 1)
+                .setPage(page)
                 .setNext(PaginationHelper.getNextPageUrl(
                         result.getTotalPages(), page, pageSize))
                 .setPrevious(PaginationHelper.getPreviousPageUrl(
@@ -53,7 +51,6 @@ public class GameController {
         return new ResponseEntity<>(gameListResponse, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ROLE_VIEW_GAMES')")
     @GetMapping("/{id}")
     public ResponseEntity<GetGameResponse> getGameById(@PathVariable String id) throws NotFoundException {
         var result = gameService.getGame(UUID.fromString(id));

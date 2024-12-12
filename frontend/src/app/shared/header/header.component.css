@@ -1,0 +1,29 @@
+.header {
+  display: flex;
+  border: dashed red 1px;
+  background: salmon;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
+.nav-button-container {
+  display: flex;
+}
+
+.nav-button {
+  width: 7rem;
+  border: none;
+  background: transparent;
+  font-weight: bold;
+  color: var(--red-primary);
+  font-size: 0.9rem;
+  &:hover {
+    background: rgba(255,255,255,0.5);
+  }
+}
+
+.nav-menu {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}

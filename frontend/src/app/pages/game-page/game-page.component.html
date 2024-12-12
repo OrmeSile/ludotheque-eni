@@ -1,1 +1,7 @@
-<p>game-page works!</p>
+<div class="game-container">
+  <div class="name">{{game()?.name}}</div>
+  <div class="description">{{game()?.description}}</div>
+  <div class="copies">{{game()?.copies}}</div>
+  <div class="creation-date">{{game()?.timeOfCreation | zonedTimestamp}}</div>
+  <div class="release-date">{{game()?.yearPublished}}</div>
+</div>

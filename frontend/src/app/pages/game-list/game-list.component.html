@@ -1,16 +1,17 @@
 @if (user(); as userValue) {
   @if (!userValue.anonymous) {
     <button (click)="fetchGames()">fetch games</button>
-    @if (gamelist().length > 0) {
+    @if (games().size > 0) {
       <div class="game-list-container">
       <ul class="game-list">
-      @for (game of gamelist(); track game.id) {
-        @if($index > (gamelist().length / 3 * 2)){
+      @for (game of games().values(); track game.id){
+        @if($index === games().size - 10){
           <app-game-list-item
             [game]="game"
             appIntersection
             (isIntersecting) ="isIntersecting($event)"
             [isContinuous] ="true"
+            [debounceTime]="0"
           />
         }@else{
           <app-game-list-item [game]="game"/>

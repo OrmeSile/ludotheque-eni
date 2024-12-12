@@ -1,4 +1,4 @@
-<div class="security">
+<div class="button-container">
   @if (user(); as userValue) { @if (userValue.anonymous) {
     <button
       data-testid="btn-sign-in"
@@ -7,7 +7,7 @@
       Sign In
     </button>
   } @else {
-    <div class="flex items-center">
+    <div>
       <p class="profile" data-testid="p-username">Welcome {{ userValue.name }}</p>
       <button
         (click)="securityStore.signOut()"

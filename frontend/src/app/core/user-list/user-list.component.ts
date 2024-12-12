@@ -19,7 +19,6 @@ export class UserListComponent {
       .subscribe(
         {
           next: result => this.userList = result,
-          error: err => {console.log(err)},
         }
       );
   }

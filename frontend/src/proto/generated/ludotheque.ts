@@ -54,13 +54,54 @@ export function wearStatusDTOToJSON(object: WearStatusDTO): string {
   }
 }
 
-export interface GameListPaginationDTO {
+export interface GameListResponse {
   page: number;
   totalPages: number;
   count: number;
   previous: string;
   next: string;
   games: GameDTO[];
+}
+
+export interface GetGameResponse {
+  game: GameDTO | undefined;
+}
+
+export interface CreateGameRequest {
+  game: GameDTO | undefined;
+}
+
+export interface CreateGameResponse {
+  game: GameDTO | undefined;
+}
+
+export interface UpdateGameRequest {
+  game: GameDTO | undefined;
+}
+
+export interface UpdateGameResponse {
+  game: GameDTO | undefined;
+}
+
+export interface RentGameRequest {
+  gameCopyId: string;
+  userId: string;
+}
+
+export interface RentGameResponse {
+  rentedGame: GameCopyDTO | undefined;
+}
+
+export interface GetRentableGamesResponse {
+  rentableGames: GameCopyDTO[];
+}
+
+export interface GetRentedGamesResponse {
+  rentedGames: GameCopyDTO[];
+}
+
+export interface GetAllUsersResponse {
+  users: UserDTO[];
 }
 
 export interface GameDTO {
@@ -70,6 +111,7 @@ export interface GameDTO {
   timeOfCreation: TimestampDTO | undefined;
   genres: GenreDTO[];
   copies: GameCopyDTO[];
+  yearPublished: number;
 }
 
 export interface GameCopyDTO {
@@ -112,9 +154,9 @@ export interface UserDTO {
 }
 
 export interface TimestampDTO {
-  seconds: number;
-  nanos: number;
-  timezone: string;
+  timestamp: string;
+  zoneInfo: string;
+  offset: string;
 }
 
 export interface RentGameDto {
@@ -132,12 +174,17 @@ export interface GenreDTO {
 export interface Empty {
 }
 
-function createBaseGameListPaginationDTO(): GameListPaginationDTO {
+export interface ErrorResponse {
+  code: number;
+  error: string;
+}
+
+function createBaseGameListResponse(): GameListResponse {
   return { page: 0, totalPages: 0, count: 0, previous: "", next: "", games: [] };
 }
 
-export const GameListPaginationDTO: MessageFns<GameListPaginationDTO> = {
-  encode(message: GameListPaginationDTO, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const GameListResponse: MessageFns<GameListResponse> = {
+  encode(message: GameListResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.page !== 0) {
       writer.uint32(8).int32(message.page);
     }
@@ -159,10 +206,10 @@ export const GameListPaginationDTO: MessageFns<GameListPaginationDTO> = {
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): GameListPaginationDTO {
+  decode(input: BinaryReader | Uint8Array, length?: number): GameListResponse {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseGameListPaginationDTO();
+    const message = createBaseGameListResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -223,7 +270,7 @@ export const GameListPaginationDTO: MessageFns<GameListPaginationDTO> = {
     return message;
   },
 
-  fromJSON(object: any): GameListPaginationDTO {
+  fromJSON(object: any): GameListResponse {
     return {
       page: isSet(object.page) ? globalThis.Number(object.page) : 0,
       totalPages: isSet(object.totalPages) ? globalThis.Number(object.totalPages) : 0,
@@ -234,7 +281,7 @@ export const GameListPaginationDTO: MessageFns<GameListPaginationDTO> = {
     };
   },
 
-  toJSON(message: GameListPaginationDTO): unknown {
+  toJSON(message: GameListResponse): unknown {
     const obj: any = {};
     if (message.page !== 0) {
       obj.page = Math.round(message.page);
@@ -257,11 +304,11 @@ export const GameListPaginationDTO: MessageFns<GameListPaginationDTO> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<GameListPaginationDTO>, I>>(base?: I): GameListPaginationDTO {
-    return GameListPaginationDTO.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<GameListResponse>, I>>(base?: I): GameListResponse {
+    return GameListResponse.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<GameListPaginationDTO>, I>>(object: I): GameListPaginationDTO {
-    const message = createBaseGameListPaginationDTO();
+  fromPartial<I extends Exact<DeepPartial<GameListResponse>, I>>(object: I): GameListResponse {
+    const message = createBaseGameListResponse();
     message.page = object.page ?? 0;
     message.totalPages = object.totalPages ?? 0;
     message.count = object.count ?? 0;
@@ -272,8 +319,616 @@ export const GameListPaginationDTO: MessageFns<GameListPaginationDTO> = {
   },
 };
 
+function createBaseGetGameResponse(): GetGameResponse {
+  return { game: undefined };
+}
+
+export const GetGameResponse: MessageFns<GetGameResponse> = {
+  encode(message: GetGameResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.game !== undefined) {
+      GameDTO.encode(message.game, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetGameResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetGameResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.game = GameDTO.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetGameResponse {
+    return { game: isSet(object.game) ? GameDTO.fromJSON(object.game) : undefined };
+  },
+
+  toJSON(message: GetGameResponse): unknown {
+    const obj: any = {};
+    if (message.game !== undefined) {
+      obj.game = GameDTO.toJSON(message.game);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetGameResponse>, I>>(base?: I): GetGameResponse {
+    return GetGameResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetGameResponse>, I>>(object: I): GetGameResponse {
+    const message = createBaseGetGameResponse();
+    message.game = (object.game !== undefined && object.game !== null) ? GameDTO.fromPartial(object.game) : undefined;
+    return message;
+  },
+};
+
+function createBaseCreateGameRequest(): CreateGameRequest {
+  return { game: undefined };
+}
+
+export const CreateGameRequest: MessageFns<CreateGameRequest> = {
+  encode(message: CreateGameRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.game !== undefined) {
+      GameDTO.encode(message.game, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): CreateGameRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseCreateGameRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.game = GameDTO.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): CreateGameRequest {
+    return { game: isSet(object.game) ? GameDTO.fromJSON(object.game) : undefined };
+  },
+
+  toJSON(message: CreateGameRequest): unknown {
+    const obj: any = {};
+    if (message.game !== undefined) {
+      obj.game = GameDTO.toJSON(message.game);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<CreateGameRequest>, I>>(base?: I): CreateGameRequest {
+    return CreateGameRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<CreateGameRequest>, I>>(object: I): CreateGameRequest {
+    const message = createBaseCreateGameRequest();
+    message.game = (object.game !== undefined && object.game !== null) ? GameDTO.fromPartial(object.game) : undefined;
+    return message;
+  },
+};
+
+function createBaseCreateGameResponse(): CreateGameResponse {
+  return { game: undefined };
+}
+
+export const CreateGameResponse: MessageFns<CreateGameResponse> = {
+  encode(message: CreateGameResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.game !== undefined) {
+      GameDTO.encode(message.game, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): CreateGameResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseCreateGameResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.game = GameDTO.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): CreateGameResponse {
+    return { game: isSet(object.game) ? GameDTO.fromJSON(object.game) : undefined };
+  },
+
+  toJSON(message: CreateGameResponse): unknown {
+    const obj: any = {};
+    if (message.game !== undefined) {
+      obj.game = GameDTO.toJSON(message.game);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<CreateGameResponse>, I>>(base?: I): CreateGameResponse {
+    return CreateGameResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<CreateGameResponse>, I>>(object: I): CreateGameResponse {
+    const message = createBaseCreateGameResponse();
+    message.game = (object.game !== undefined && object.game !== null) ? GameDTO.fromPartial(object.game) : undefined;
+    return message;
+  },
+};
+
+function createBaseUpdateGameRequest(): UpdateGameRequest {
+  return { game: undefined };
+}
+
+export const UpdateGameRequest: MessageFns<UpdateGameRequest> = {
+  encode(message: UpdateGameRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.game !== undefined) {
+      GameDTO.encode(message.game, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): UpdateGameRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateGameRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.game = GameDTO.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UpdateGameRequest {
+    return { game: isSet(object.game) ? GameDTO.fromJSON(object.game) : undefined };
+  },
+
+  toJSON(message: UpdateGameRequest): unknown {
+    const obj: any = {};
+    if (message.game !== undefined) {
+      obj.game = GameDTO.toJSON(message.game);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<UpdateGameRequest>, I>>(base?: I): UpdateGameRequest {
+    return UpdateGameRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<UpdateGameRequest>, I>>(object: I): UpdateGameRequest {
+    const message = createBaseUpdateGameRequest();
+    message.game = (object.game !== undefined && object.game !== null) ? GameDTO.fromPartial(object.game) : undefined;
+    return message;
+  },
+};
+
+function createBaseUpdateGameResponse(): UpdateGameResponse {
+  return { game: undefined };
+}
+
+export const UpdateGameResponse: MessageFns<UpdateGameResponse> = {
+  encode(message: UpdateGameResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.game !== undefined) {
+      GameDTO.encode(message.game, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): UpdateGameResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateGameResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.game = GameDTO.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UpdateGameResponse {
+    return { game: isSet(object.game) ? GameDTO.fromJSON(object.game) : undefined };
+  },
+
+  toJSON(message: UpdateGameResponse): unknown {
+    const obj: any = {};
+    if (message.game !== undefined) {
+      obj.game = GameDTO.toJSON(message.game);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<UpdateGameResponse>, I>>(base?: I): UpdateGameResponse {
+    return UpdateGameResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<UpdateGameResponse>, I>>(object: I): UpdateGameResponse {
+    const message = createBaseUpdateGameResponse();
+    message.game = (object.game !== undefined && object.game !== null) ? GameDTO.fromPartial(object.game) : undefined;
+    return message;
+  },
+};
+
+function createBaseRentGameRequest(): RentGameRequest {
+  return { gameCopyId: "", userId: "" };
+}
+
+export const RentGameRequest: MessageFns<RentGameRequest> = {
+  encode(message: RentGameRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.gameCopyId !== "") {
+      writer.uint32(10).string(message.gameCopyId);
+    }
+    if (message.userId !== "") {
+      writer.uint32(18).string(message.userId);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): RentGameRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseRentGameRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.gameCopyId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.userId = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): RentGameRequest {
+    return {
+      gameCopyId: isSet(object.gameCopyId) ? globalThis.String(object.gameCopyId) : "",
+      userId: isSet(object.userId) ? globalThis.String(object.userId) : "",
+    };
+  },
+
+  toJSON(message: RentGameRequest): unknown {
+    const obj: any = {};
+    if (message.gameCopyId !== "") {
+      obj.gameCopyId = message.gameCopyId;
+    }
+    if (message.userId !== "") {
+      obj.userId = message.userId;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<RentGameRequest>, I>>(base?: I): RentGameRequest {
+    return RentGameRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<RentGameRequest>, I>>(object: I): RentGameRequest {
+    const message = createBaseRentGameRequest();
+    message.gameCopyId = object.gameCopyId ?? "";
+    message.userId = object.userId ?? "";
+    return message;
+  },
+};
+
+function createBaseRentGameResponse(): RentGameResponse {
+  return { rentedGame: undefined };
+}
+
+export const RentGameResponse: MessageFns<RentGameResponse> = {
+  encode(message: RentGameResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.rentedGame !== undefined) {
+      GameCopyDTO.encode(message.rentedGame, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): RentGameResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseRentGameResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.rentedGame = GameCopyDTO.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): RentGameResponse {
+    return { rentedGame: isSet(object.rentedGame) ? GameCopyDTO.fromJSON(object.rentedGame) : undefined };
+  },
+
+  toJSON(message: RentGameResponse): unknown {
+    const obj: any = {};
+    if (message.rentedGame !== undefined) {
+      obj.rentedGame = GameCopyDTO.toJSON(message.rentedGame);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<RentGameResponse>, I>>(base?: I): RentGameResponse {
+    return RentGameResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<RentGameResponse>, I>>(object: I): RentGameResponse {
+    const message = createBaseRentGameResponse();
+    message.rentedGame = (object.rentedGame !== undefined && object.rentedGame !== null)
+      ? GameCopyDTO.fromPartial(object.rentedGame)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseGetRentableGamesResponse(): GetRentableGamesResponse {
+  return { rentableGames: [] };
+}
+
+export const GetRentableGamesResponse: MessageFns<GetRentableGamesResponse> = {
+  encode(message: GetRentableGamesResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.rentableGames) {
+      GameCopyDTO.encode(v!, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetRentableGamesResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetRentableGamesResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.rentableGames.push(GameCopyDTO.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetRentableGamesResponse {
+    return {
+      rentableGames: globalThis.Array.isArray(object?.rentableGames)
+        ? object.rentableGames.map((e: any) => GameCopyDTO.fromJSON(e))
+        : [],
+    };
+  },
+
+  toJSON(message: GetRentableGamesResponse): unknown {
+    const obj: any = {};
+    if (message.rentableGames?.length) {
+      obj.rentableGames = message.rentableGames.map((e) => GameCopyDTO.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetRentableGamesResponse>, I>>(base?: I): GetRentableGamesResponse {
+    return GetRentableGamesResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetRentableGamesResponse>, I>>(object: I): GetRentableGamesResponse {
+    const message = createBaseGetRentableGamesResponse();
+    message.rentableGames = object.rentableGames?.map((e) => GameCopyDTO.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseGetRentedGamesResponse(): GetRentedGamesResponse {
+  return { rentedGames: [] };
+}
+
+export const GetRentedGamesResponse: MessageFns<GetRentedGamesResponse> = {
+  encode(message: GetRentedGamesResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.rentedGames) {
+      GameCopyDTO.encode(v!, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetRentedGamesResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetRentedGamesResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.rentedGames.push(GameCopyDTO.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetRentedGamesResponse {
+    return {
+      rentedGames: globalThis.Array.isArray(object?.rentedGames)
+        ? object.rentedGames.map((e: any) => GameCopyDTO.fromJSON(e))
+        : [],
+    };
+  },
+
+  toJSON(message: GetRentedGamesResponse): unknown {
+    const obj: any = {};
+    if (message.rentedGames?.length) {
+      obj.rentedGames = message.rentedGames.map((e) => GameCopyDTO.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetRentedGamesResponse>, I>>(base?: I): GetRentedGamesResponse {
+    return GetRentedGamesResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetRentedGamesResponse>, I>>(object: I): GetRentedGamesResponse {
+    const message = createBaseGetRentedGamesResponse();
+    message.rentedGames = object.rentedGames?.map((e) => GameCopyDTO.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseGetAllUsersResponse(): GetAllUsersResponse {
+  return { users: [] };
+}
+
+export const GetAllUsersResponse: MessageFns<GetAllUsersResponse> = {
+  encode(message: GetAllUsersResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.users) {
+      UserDTO.encode(v!, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetAllUsersResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetAllUsersResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.users.push(UserDTO.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetAllUsersResponse {
+    return { users: globalThis.Array.isArray(object?.users) ? object.users.map((e: any) => UserDTO.fromJSON(e)) : [] };
+  },
+
+  toJSON(message: GetAllUsersResponse): unknown {
+    const obj: any = {};
+    if (message.users?.length) {
+      obj.users = message.users.map((e) => UserDTO.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetAllUsersResponse>, I>>(base?: I): GetAllUsersResponse {
+    return GetAllUsersResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetAllUsersResponse>, I>>(object: I): GetAllUsersResponse {
+    const message = createBaseGetAllUsersResponse();
+    message.users = object.users?.map((e) => UserDTO.fromPartial(e)) || [];
+    return message;
+  },
+};
+
 function createBaseGameDTO(): GameDTO {
-  return { id: "", name: "", description: "", timeOfCreation: undefined, genres: [], copies: [] };
+  return { id: "", name: "", description: "", timeOfCreation: undefined, genres: [], copies: [], yearPublished: 0 };
 }
 
 export const GameDTO: MessageFns<GameDTO> = {
@@ -295,6 +950,9 @@ export const GameDTO: MessageFns<GameDTO> = {
     }
     for (const v of message.copies) {
       GameCopyDTO.encode(v!, writer.uint32(50).fork()).join();
+    }
+    if (message.yearPublished !== 0) {
+      writer.uint32(56).int32(message.yearPublished);
     }
     return writer;
   },
@@ -354,6 +1012,14 @@ export const GameDTO: MessageFns<GameDTO> = {
           message.copies.push(GameCopyDTO.decode(reader, reader.uint32()));
           continue;
         }
+        case 7: {
+          if (tag !== 56) {
+            break;
+          }
+
+          message.yearPublished = reader.int32();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -371,6 +1037,7 @@ export const GameDTO: MessageFns<GameDTO> = {
       timeOfCreation: isSet(object.timeOfCreation) ? TimestampDTO.fromJSON(object.timeOfCreation) : undefined,
       genres: globalThis.Array.isArray(object?.genres) ? object.genres.map((e: any) => GenreDTO.fromJSON(e)) : [],
       copies: globalThis.Array.isArray(object?.copies) ? object.copies.map((e: any) => GameCopyDTO.fromJSON(e)) : [],
+      yearPublished: isSet(object.yearPublished) ? globalThis.Number(object.yearPublished) : 0,
     };
   },
 
@@ -394,6 +1061,9 @@ export const GameDTO: MessageFns<GameDTO> = {
     if (message.copies?.length) {
       obj.copies = message.copies.map((e) => GameCopyDTO.toJSON(e));
     }
+    if (message.yearPublished !== 0) {
+      obj.yearPublished = Math.round(message.yearPublished);
+    }
     return obj;
   },
 
@@ -410,6 +1080,7 @@ export const GameDTO: MessageFns<GameDTO> = {
       : undefined;
     message.genres = object.genres?.map((e) => GenreDTO.fromPartial(e)) || [];
     message.copies = object.copies?.map((e) => GameCopyDTO.fromPartial(e)) || [];
+    message.yearPublished = object.yearPublished ?? 0;
     return message;
   },
 };
@@ -1059,19 +1730,19 @@ export const UserDTO: MessageFns<UserDTO> = {
 };
 
 function createBaseTimestampDTO(): TimestampDTO {
-  return { seconds: 0, nanos: 0, timezone: "" };
+  return { timestamp: "", zoneInfo: "", offset: "" };
 }
 
 export const TimestampDTO: MessageFns<TimestampDTO> = {
   encode(message: TimestampDTO, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.seconds !== 0) {
-      writer.uint32(8).int64(message.seconds);
+    if (message.timestamp !== "") {
+      writer.uint32(10).string(message.timestamp);
     }
-    if (message.nanos !== 0) {
-      writer.uint32(16).int64(message.nanos);
+    if (message.zoneInfo !== "") {
+      writer.uint32(18).string(message.zoneInfo);
     }
-    if (message.timezone !== "") {
-      writer.uint32(26).string(message.timezone);
+    if (message.offset !== "") {
+      writer.uint32(26).string(message.offset);
     }
     return writer;
   },
@@ -1084,19 +1755,19 @@ export const TimestampDTO: MessageFns<TimestampDTO> = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1: {
-          if (tag !== 8) {
+          if (tag !== 10) {
             break;
           }
 
-          message.seconds = longToNumber(reader.int64());
+          message.timestamp = reader.string();
           continue;
         }
         case 2: {
-          if (tag !== 16) {
+          if (tag !== 18) {
             break;
           }
 
-          message.nanos = longToNumber(reader.int64());
+          message.zoneInfo = reader.string();
           continue;
         }
         case 3: {
@@ -1104,7 +1775,7 @@ export const TimestampDTO: MessageFns<TimestampDTO> = {
             break;
           }
 
-          message.timezone = reader.string();
+          message.offset = reader.string();
           continue;
         }
       }
@@ -1118,22 +1789,22 @@ export const TimestampDTO: MessageFns<TimestampDTO> = {
 
   fromJSON(object: any): TimestampDTO {
     return {
-      seconds: isSet(object.seconds) ? globalThis.Number(object.seconds) : 0,
-      nanos: isSet(object.nanos) ? globalThis.Number(object.nanos) : 0,
-      timezone: isSet(object.timezone) ? globalThis.String(object.timezone) : "",
+      timestamp: isSet(object.timestamp) ? globalThis.String(object.timestamp) : "",
+      zoneInfo: isSet(object.zoneInfo) ? globalThis.String(object.zoneInfo) : "",
+      offset: isSet(object.offset) ? globalThis.String(object.offset) : "",
     };
   },
 
   toJSON(message: TimestampDTO): unknown {
     const obj: any = {};
-    if (message.seconds !== 0) {
-      obj.seconds = Math.round(message.seconds);
+    if (message.timestamp !== "") {
+      obj.timestamp = message.timestamp;
     }
-    if (message.nanos !== 0) {
-      obj.nanos = Math.round(message.nanos);
+    if (message.zoneInfo !== "") {
+      obj.zoneInfo = message.zoneInfo;
     }
-    if (message.timezone !== "") {
-      obj.timezone = message.timezone;
+    if (message.offset !== "") {
+      obj.offset = message.offset;
     }
     return obj;
   },
@@ -1143,9 +1814,9 @@ export const TimestampDTO: MessageFns<TimestampDTO> = {
   },
   fromPartial<I extends Exact<DeepPartial<TimestampDTO>, I>>(object: I): TimestampDTO {
     const message = createBaseTimestampDTO();
-    message.seconds = object.seconds ?? 0;
-    message.nanos = object.nanos ?? 0;
-    message.timezone = object.timezone ?? "";
+    message.timestamp = object.timestamp ?? "";
+    message.zoneInfo = object.zoneInfo ?? "";
+    message.offset = object.offset ?? "";
     return message;
   },
 };
@@ -1373,6 +2044,82 @@ export const Empty: MessageFns<Empty> = {
   },
   fromPartial<I extends Exact<DeepPartial<Empty>, I>>(_: I): Empty {
     const message = createBaseEmpty();
+    return message;
+  },
+};
+
+function createBaseErrorResponse(): ErrorResponse {
+  return { code: 0, error: "" };
+}
+
+export const ErrorResponse: MessageFns<ErrorResponse> = {
+  encode(message: ErrorResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.code !== 0) {
+      writer.uint32(8).int32(message.code);
+    }
+    if (message.error !== "") {
+      writer.uint32(18).string(message.error);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): ErrorResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseErrorResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.code = reader.int32();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.error = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ErrorResponse {
+    return {
+      code: isSet(object.code) ? globalThis.Number(object.code) : 0,
+      error: isSet(object.error) ? globalThis.String(object.error) : "",
+    };
+  },
+
+  toJSON(message: ErrorResponse): unknown {
+    const obj: any = {};
+    if (message.code !== 0) {
+      obj.code = Math.round(message.code);
+    }
+    if (message.error !== "") {
+      obj.error = message.error;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<ErrorResponse>, I>>(base?: I): ErrorResponse {
+    return ErrorResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<ErrorResponse>, I>>(object: I): ErrorResponse {
+    const message = createBaseErrorResponse();
+    message.code = object.code ?? 0;
+    message.error = object.error ?? "";
     return message;
   },
 };

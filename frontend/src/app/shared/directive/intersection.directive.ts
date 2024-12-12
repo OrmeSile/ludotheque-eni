@@ -16,6 +16,7 @@ export class IntersectionDirective implements OnInit , OnDestroy{
 
   isIntersecting = output<boolean>()
   _isIntersecting = false
+  intersectionSubscription = output<Subscription | undefined>()
   private subscription: Subscription | undefined
 
   ngOnInit() {
@@ -36,7 +37,6 @@ export class IntersectionDirective implements OnInit , OnDestroy{
       const intersectionObserver = new IntersectionObserver(entries => {
         const { isIntersecting } = entries[0]
         subscriber.next(isIntersecting)
-
         isIntersecting &&
         !this.isContinuous &&
         intersectionObserver.disconnect()
