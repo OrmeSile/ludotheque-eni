@@ -5,7 +5,7 @@
       <div class="game-list-container">
       <ul class="game-list">
       @for (game of gamelist(); track game.id) {
-        @if($last){
+        @if($index > (gamelist().length / 3 * 2)){
           <app-game-list-item
             [game]="game"
             appIntersection

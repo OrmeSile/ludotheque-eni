@@ -37,9 +37,6 @@ public class GameController {
         if (page < 0) page = 0;
         if (pageSize <= 0) pageSize = 40;
         var result = gameService.getGamePageWithSize(page, pageSize);
-        var currentUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .build()
-                .toUriString();
         var gameListResponse = GameListResponse.newBuilder()
                 .addAllGames(result.getContent()
                         .stream()
@@ -48,7 +45,7 @@ public class GameController {
                 .setPage(page + 1)
                 .setNext(PaginationHelper.getNextPageUrl(
                         result.getTotalPages(), page, pageSize))
-                .setPrevious(PaginationHelper.getPreviousPageUrl(currentUri,
+                .setPrevious(PaginationHelper.getPreviousPageUrl(
                         result.getTotalPages(), page, pageSize))
                 .setCount(result.getTotalElements())
                 .setTotalPages(result.getTotalPages())

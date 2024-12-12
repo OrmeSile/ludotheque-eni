@@ -1,19 +1,24 @@
 package dev.orme.ludotheque.helpers;
 
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 public class PaginationHelper {
-    public static String getNextPageUrl( int totalPages, int page, int pageSize) {
+    private static final String currentUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+            .build()
+            .toUriString();
+    public static String getNextPageUrl(int totalPages, int page, int pageSize) {
         page++;
         if((page * pageSize) >= totalPages){
             return "";
         }
-        return String.format("/game/?page=%d&size=%d", page + 1, pageSize);
+        return String.format("%s/game/?page=%d&size=%d", PaginationHelper.currentUri, page + 1, pageSize);
     }
 
-    public static String getPreviousPageUrl(String baseRequestUrl, int totalCount, int page, int pageSize) {
+    public static String getPreviousPageUrl(int totalCount, int page, int pageSize) {
         page++;
         if(page == 1){
-            return "";
+            return PaginationHelper.currentUri + "/game/";
         }
-        return String.format("%s/?page=%d&size=%d", baseRequestUrl, page - 1, pageSize);
+        return String.format("%s/game/?page=%d&size=%d", PaginationHelper.currentUri, page - 1, pageSize);
     }
 }
