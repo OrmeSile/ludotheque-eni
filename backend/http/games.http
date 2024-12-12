@@ -26,20 +26,22 @@ Authorization: Bearer {{$auth.token("spring-resource-oauth")}}
 
 ###
 
-GET http://localhost:8081/game/65324385-7fcf-4b74-80f8-2bf53fcf4288
-Accept: application/x-protobuf
-Content-Type: application/x-protobuf
+GET http://localhost:8081/game/72ba166b-8c5b-4762-8e7f-6f1a261e3996
+Accept: application/json
+Content-Type: application/json
 Authorization: Bearer {{$auth.token("spring-resource-oauth")}}
 
 ###
 
-PUT http://localhost:8081/game/71b6f540-a59b-4bc7-8f62-9a27aff568e4
-Accept: application/x-protobuf
+PUT http://localhost:8081/game/72ba166b-8c5b-4762-8e7f-6f1a261e3996
+Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("spring-resource-oauth")}}
 
 {
-"name": "test"
+"game":{"images": [
+  {"path": "/img/icons/icon-board.svg", "alt": "", "order": 1}
+]}
 }
 
 ###

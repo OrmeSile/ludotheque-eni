@@ -5,6 +5,8 @@ import dev.orme.ludotheque.repositories.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -33,13 +35,14 @@ public class GameService {
     }
 
     public Game getGame(UUID uuid) throws NotFoundException {
-        var game = this.gameRepository.findById(uuid);
+        var game = gameRepository.findById(uuid);
         if(game.isEmpty()) {
             throw new NotFoundException("game", uuid);
         }
         return game.get();
     }
 
+    @Transactional
     public Page<Game> getGamePageWithSize(int page, int size) throws NotFoundException {
         var pageResponse = gameRepository.findAll(PageRequest.of(page, size));
         if(pageResponse.hasContent())
@@ -47,17 +50,18 @@ public class GameService {
         throw new NotFoundException("game");
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public Game updateGame (UUID id, Game game) throws NotUpdatedException, NotFoundException {
         if(id == null || !gameRepository.existsById(id))
             throw new NotFoundException("game", id);
         if(game.getId() == null) {
             game.setId(id);
         }
-        try {
+//        try {
             return gameRepository.save(game);
-        }catch (Exception e){
-            throw new NotUpdatedException("game", id);
-        }
+//        }catch (Exception e){
+//            throw new NotUpdatedException("game", id);
+//        }
     }
 
     public void deleteGame(UUID id) throws NotFoundException {

@@ -5,5 +5,17 @@
       <sourceFolder url="file://$MODULE_DIR$/../../backend/src/main/proto" isTestSource="false" />
     </content>
   </component>
+  <component name="FacetManager">
+    <facet type="jpa" name="JPA">
+      <configuration>
+        <setting name="validation-enabled" value="true" />
+        <setting name="provider-name" value="Hibernate" />
+        <datasource-mapping>
+          <factory-entry name="entityManagerFactory" value="91058fb5-a765-42fd-8c7d-a2a33fd88e4e" />
+        </datasource-mapping>
+        <naming-strategy-map />
+      </configuration>
+    </facet>
+  </component>
   <component name="Go" enabled="true" />
 </module>

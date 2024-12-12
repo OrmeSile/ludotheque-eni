@@ -112,6 +112,14 @@ export interface GameDTO {
   genres: GenreDTO[];
   copies: GameCopyDTO[];
   yearPublished: number;
+  images: ImageInfoDTO[];
+}
+
+export interface ImageInfoDTO {
+  id: string;
+  path: string;
+  alt: string;
+  game: string;
 }
 
 export interface GameCopyDTO {
@@ -928,7 +936,16 @@ export const GetAllUsersResponse: MessageFns<GetAllUsersResponse> = {
 };
 
 function createBaseGameDTO(): GameDTO {
-  return { id: "", name: "", description: "", timeOfCreation: undefined, genres: [], copies: [], yearPublished: 0 };
+  return {
+    id: "",
+    name: "",
+    description: "",
+    timeOfCreation: undefined,
+    genres: [],
+    copies: [],
+    yearPublished: 0,
+    images: [],
+  };
 }
 
 export const GameDTO: MessageFns<GameDTO> = {
@@ -953,6 +970,9 @@ export const GameDTO: MessageFns<GameDTO> = {
     }
     if (message.yearPublished !== 0) {
       writer.uint32(56).int32(message.yearPublished);
+    }
+    for (const v of message.images) {
+      ImageInfoDTO.encode(v!, writer.uint32(66).fork()).join();
     }
     return writer;
   },
@@ -1020,6 +1040,14 @@ export const GameDTO: MessageFns<GameDTO> = {
           message.yearPublished = reader.int32();
           continue;
         }
+        case 8: {
+          if (tag !== 66) {
+            break;
+          }
+
+          message.images.push(ImageInfoDTO.decode(reader, reader.uint32()));
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -1038,6 +1066,7 @@ export const GameDTO: MessageFns<GameDTO> = {
       genres: globalThis.Array.isArray(object?.genres) ? object.genres.map((e: any) => GenreDTO.fromJSON(e)) : [],
       copies: globalThis.Array.isArray(object?.copies) ? object.copies.map((e: any) => GameCopyDTO.fromJSON(e)) : [],
       yearPublished: isSet(object.yearPublished) ? globalThis.Number(object.yearPublished) : 0,
+      images: globalThis.Array.isArray(object?.images) ? object.images.map((e: any) => ImageInfoDTO.fromJSON(e)) : [],
     };
   },
 
@@ -1064,6 +1093,9 @@ export const GameDTO: MessageFns<GameDTO> = {
     if (message.yearPublished !== 0) {
       obj.yearPublished = Math.round(message.yearPublished);
     }
+    if (message.images?.length) {
+      obj.images = message.images.map((e) => ImageInfoDTO.toJSON(e));
+    }
     return obj;
   },
 
@@ -1081,6 +1113,115 @@ export const GameDTO: MessageFns<GameDTO> = {
     message.genres = object.genres?.map((e) => GenreDTO.fromPartial(e)) || [];
     message.copies = object.copies?.map((e) => GameCopyDTO.fromPartial(e)) || [];
     message.yearPublished = object.yearPublished ?? 0;
+    message.images = object.images?.map((e) => ImageInfoDTO.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseImageInfoDTO(): ImageInfoDTO {
+  return { id: "", path: "", alt: "", game: "" };
+}
+
+export const ImageInfoDTO: MessageFns<ImageInfoDTO> = {
+  encode(message: ImageInfoDTO, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    if (message.path !== "") {
+      writer.uint32(18).string(message.path);
+    }
+    if (message.alt !== "") {
+      writer.uint32(26).string(message.alt);
+    }
+    if (message.game !== "") {
+      writer.uint32(34).string(message.game);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): ImageInfoDTO {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseImageInfoDTO();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.path = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.alt = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.game = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ImageInfoDTO {
+    return {
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      path: isSet(object.path) ? globalThis.String(object.path) : "",
+      alt: isSet(object.alt) ? globalThis.String(object.alt) : "",
+      game: isSet(object.game) ? globalThis.String(object.game) : "",
+    };
+  },
+
+  toJSON(message: ImageInfoDTO): unknown {
+    const obj: any = {};
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.path !== "") {
+      obj.path = message.path;
+    }
+    if (message.alt !== "") {
+      obj.alt = message.alt;
+    }
+    if (message.game !== "") {
+      obj.game = message.game;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<ImageInfoDTO>, I>>(base?: I): ImageInfoDTO {
+    return ImageInfoDTO.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<ImageInfoDTO>, I>>(object: I): ImageInfoDTO {
+    const message = createBaseImageInfoDTO();
+    message.id = object.id ?? "";
+    message.path = object.path ?? "";
+    message.alt = object.alt ?? "";
+    message.game = object.game ?? "";
     return message;
   },
 };

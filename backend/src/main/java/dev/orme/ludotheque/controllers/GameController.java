@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -29,6 +30,7 @@ public class GameController {
         this.gameConverter = gameConverter;
     }
 
+    @Transactional
     @GetMapping(value = "")
     public ResponseEntity<GameListResponse> getAllGames(@RequestParam(required = false, defaultValue = "0") int page,
                                                         @RequestParam(required = false, defaultValue = "40") int pageSize) throws NotFoundException {
@@ -51,6 +53,7 @@ public class GameController {
         return new ResponseEntity<>(gameListResponse, HttpStatus.OK);
     }
 
+    @Transactional
     @GetMapping("/{id}")
     public ResponseEntity<GetGameResponse> getGameById(@PathVariable String id) throws NotFoundException {
         var result = gameService.getGame(UUID.fromString(id));
@@ -61,7 +64,7 @@ public class GameController {
     @PreAuthorize("hasRole('ROLE_CREATE_GAMES')")
     @PostMapping("/")
     public ResponseEntity<CreateGameResponse> addGame(@RequestBody CreateGameRequest createGameRequest) throws NotCreatedException, BadRequestException {
-        if (!createGameRequest.hasGame() || createGameRequest.getGame().getId().isBlank())
+        if (!createGameRequest.hasGame())
             throw new BadRequestException();
         var createdGame = gameService.createGame(gameConverter.fromDto(createGameRequest.getGame()));
         return new ResponseEntity<>(CreateGameResponse.newBuilder().setGame(gameConverter.toDto(createdGame)).build(), HttpStatus.CREATED);
@@ -69,8 +72,9 @@ public class GameController {
 
     @PreAuthorize("hasRole('ROLE_EDIT_GAMES')")
     @PutMapping("/{id}")
-    public ResponseEntity<UpdateGameResponse> updateGame(@PathVariable String id, @RequestBody GameDTO game) throws NotUpdatedException, NotFoundException {
-        var result = gameService.updateGame(UUID.fromString(id), gameConverter.fromDto(game));
+    public ResponseEntity<UpdateGameResponse> updateGame(@PathVariable String id,
+                                                         @RequestBody UpdateGameRequest updateGameRequest) throws NotUpdatedException, NotFoundException {
+        var result = gameService.updateGame(UUID.fromString(id), gameConverter.fromDto(updateGameRequest.getGame()));
         var dto = UpdateGameResponse.newBuilder().setGame(gameConverter.toDto(result)).build();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }

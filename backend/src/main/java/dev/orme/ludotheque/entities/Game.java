@@ -1,12 +1,14 @@
 package dev.orme.ludotheque.entities;
 
 import jakarta.persistence.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
 
+@Transactional
 @Entity(name = "game")
 public class Game implements Comparable<Game> {
 
@@ -21,6 +23,9 @@ public class Game implements Comparable<Game> {
     private SortedSet<Genre> genres = new TreeSet<>();
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "game")
     private SortedSet<GameCopy> copies = new TreeSet<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "game_id")
+    private SortedSet<ImageInfo> images = new TreeSet<>();
 
 
     public Game() {
@@ -95,6 +100,14 @@ public class Game implements Comparable<Game> {
 
     public void setCopies(SortedSet<GameCopy> copies) {
         this.copies = copies;
+    }
+
+    public SortedSet<ImageInfo> getImages() {
+        return images;
+    }
+
+    public void setImages(SortedSet<ImageInfo> images) {
+        this.images = images;
     }
 
     @Override

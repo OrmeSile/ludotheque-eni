@@ -16,20 +16,25 @@ public class TimestampConverter implements DtoConvertable<ZonedDateTime, Timesta
         if (zonedDateTime == null) return null;
 
         return TimestampDTO.newBuilder()
-                           .setTimestamp(Timestamp.valueOf(zonedDateTime.toLocalDateTime())
-                                                  .toString())
-                           .setOffset(zonedDateTime.getOffset()
-                                                   .toString())
-                           .setZoneInfo(zonedDateTime.getZone()
-                                                     .getId())
-                           .build();
+                .setTimestamp(Timestamp.valueOf(zonedDateTime.toLocalDateTime())
+                        .toString())
+                .setOffset(zonedDateTime.getOffset()
+                        .toString())
+                .setZoneInfo(zonedDateTime.getZone()
+                        .getId())
+                .build();
     }
 
     @Override
     public ZonedDateTime fromDto(TimestampDTO timestampDto) {
-        if (timestampDto == null) return null;
+        if (timestampDto.getTimestamp().isBlank()) return null;
 
-        return ZonedDateTime.ofLocal(Timestamp.valueOf(timestampDto.getTimestamp())
-                                              .toLocalDateTime(), ZoneId.of(timestampDto.getZoneInfo()), ZoneOffset.of(timestampDto.getOffset()));
+        return ZonedDateTime.ofLocal(
+                Timestamp.valueOf(
+                        timestampDto.getTimestamp()).toLocalDateTime(),
+                ZoneId.of(timestampDto.getZoneInfo()),
+                ZoneOffset.of(timestampDto.getOffset()
+                )
+        );
     }
 }

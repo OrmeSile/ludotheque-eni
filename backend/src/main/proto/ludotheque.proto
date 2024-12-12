@@ -63,6 +63,15 @@ message GameDTO {
   repeated GenreDTO genres = 5;
   repeated GameCopyDTO copies = 6;
   int32 yearPublished = 7;
+  repeated ImageInfoDTO images = 8;
+}
+
+message ImageInfoDTO {
+  string id = 1;
+  string path = 2;
+  string alt = 3;
+  string game = 4;
+  int32 order = 5;
 }
 
 message GameCopyDTO {

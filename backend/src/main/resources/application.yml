@@ -35,4 +35,4 @@ spring:
       continue-on-error: true
 logging:
   level:
-    root: info
+    root: debug
