@@ -1,8 +1,9 @@
-.button-container {
+.login-button-container {
   display: flex;
   justify-content: center;
   flex-flow: column nowrap;
   border: dashed blue 1px;
   align-items: center;
   width: 20rem;
+  height: 100%;
 }

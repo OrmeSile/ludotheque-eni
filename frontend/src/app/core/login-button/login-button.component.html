@@ -1,20 +1,20 @@
-<div class="button-container">
-  @if (user(); as userValue) { @if (userValue.anonymous) {
-    <button
-      data-testid="btn-sign-in"
-      (click)="securityStore.signIn()"
-    >
-      Sign In
-    </button>
-  } @else {
-    <div>
-      <p class="profile" data-testid="p-username">Welcome {{ userValue.name }}</p>
+<div class="login-button-container">
+  @if (user(); as userValue) {
+    @if (userValue.anonymous) {
+      <button
+        class="app-button"
+        data-testid="btn-sign-in"
+        (click)="securityStore.signIn()"
+      >
+        Sign In
+      </button>
+    } @else {
       <button
         (click)="securityStore.signOut()"
         data-testid="btn-sign-out"
       >
         Sign Out
       </button>
-    </div>
-  } }
+    }
+  }
 </div>

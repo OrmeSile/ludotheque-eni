@@ -11,7 +11,12 @@ ul {
 }
 
 :root{
-  --background: #FAFAFA;
+  --text-primary-dark: #e1e1e1;
+  --text-primary-light: #181818;
+  --background-primary-dark: #232323;
+  --background-primary-light: #e3e3e3;
+  --accent-primary-dark: #3d8f80;
+  --accent-primary-light: #e3e3e3;
   --blue-primary: #0277bd;
   --blue-secondary: #03a9f4;
   --blue-tertiary: #81d4fa;
@@ -26,4 +31,20 @@ ul {
   --yellow-primary: #ff8f00;
   --yellow-secondary: #ffc107;
   --yellow-tertiary: #ffe082;
+}
+
+.app-button {
+  border: none;
+  display: flex;
+  height: 2.2rem;
+  justify-content: center;
+  align-items: center;
+  padding: 0 1rem;
+  margin: 0;
+  border-radius: 0.2rem;
+}
+
+.app-button:hover {
+  cursor: pointer;
+
 }
