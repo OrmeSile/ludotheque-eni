@@ -120,6 +120,7 @@ export interface ImageInfoDTO {
   path: string;
   alt: string;
   game: string;
+  order: number;
 }
 
 export interface GameCopyDTO {
@@ -1119,7 +1120,7 @@ export const GameDTO: MessageFns<GameDTO> = {
 };
 
 function createBaseImageInfoDTO(): ImageInfoDTO {
-  return { id: "", path: "", alt: "", game: "" };
+  return { id: "", path: "", alt: "", game: "", order: 0 };
 }
 
 export const ImageInfoDTO: MessageFns<ImageInfoDTO> = {
@@ -1135,6 +1136,9 @@ export const ImageInfoDTO: MessageFns<ImageInfoDTO> = {
     }
     if (message.game !== "") {
       writer.uint32(34).string(message.game);
+    }
+    if (message.order !== 0) {
+      writer.uint32(40).int32(message.order);
     }
     return writer;
   },
@@ -1178,6 +1182,14 @@ export const ImageInfoDTO: MessageFns<ImageInfoDTO> = {
           message.game = reader.string();
           continue;
         }
+        case 5: {
+          if (tag !== 40) {
+            break;
+          }
+
+          message.order = reader.int32();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -1193,6 +1205,7 @@ export const ImageInfoDTO: MessageFns<ImageInfoDTO> = {
       path: isSet(object.path) ? globalThis.String(object.path) : "",
       alt: isSet(object.alt) ? globalThis.String(object.alt) : "",
       game: isSet(object.game) ? globalThis.String(object.game) : "",
+      order: isSet(object.order) ? globalThis.Number(object.order) : 0,
     };
   },
 
@@ -1210,6 +1223,9 @@ export const ImageInfoDTO: MessageFns<ImageInfoDTO> = {
     if (message.game !== "") {
       obj.game = message.game;
     }
+    if (message.order !== 0) {
+      obj.order = Math.round(message.order);
+    }
     return obj;
   },
 
@@ -1222,6 +1238,7 @@ export const ImageInfoDTO: MessageFns<ImageInfoDTO> = {
     message.path = object.path ?? "";
     message.alt = object.alt ?? "";
     message.game = object.game ?? "";
+    message.order = object.order ?? 0;
     return message;
   },
 };

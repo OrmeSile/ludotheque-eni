@@ -2,7 +2,6 @@
   position: absolute;
 }
 .game-item {
-  z-index: 1000;
   position: relative;
   display: flex;
   align-items: center;
@@ -10,23 +9,20 @@
   border: solid #DDD 1px;
   border-radius: 0.5rem;
   box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
-  height: 10rem;
+  height: 13rem;
   overflow: hidden;
   min-width: 1fr;
-  background: rgba(255,255,255,0.5);
+  background: #FEFEFE;
   backdrop-filter: blur(0.1rem);
+  transition: box-shadow 0.1s ease-in-out, width 0.2s ease-in-out, height 0.2s ease-in-out, top 0.2s ease-in-out, left 0.2s ease-in-out;
 }
 
 .game-item:hover {
-  z-index: 2000;
+  border: solid var(--blue-tertiary) 1px;
+  background: ;
   position: relative;
-  width: 102%;
-  height: 102%;
-  top: -1%;
-  left: -1%;
-  transition: box-shadow 0.2s ease-in, width 0.2s ease-in-out, height 0.2s ease-in-out, top 0.2s ease-in-out, left 0.2s ease-in-out;
-  box-shadow: 0 0.3rem 0.5rem rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(0.4rem) saturate(2);
+  transition: box-shadow 0.2s ease-in-out, width 0.2s ease-in-out, height 0.2s ease-in-out, top 0.2s ease-in-out, left 0.2s ease-in-out;
+  box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.4);
   cursor: pointer;
   & .genre-list {
     visibility: visible;
@@ -39,7 +35,6 @@
   height: 3rem;
   align-items: center;
   width: 100%;
-  background: linear-gradient(180deg, #FFFFFF 0%, rgba(255,255,255, 0.5) 90%, rgba(255,255,255,0) 100%);
   display: flex;
   justify-content: center;
 }
@@ -47,5 +42,29 @@
   visibility: hidden;
 }
 
+.game-item:before {
+  content: "";
+  display: block;
+  position: absolute;
+  border-radius: 100%;
+  width: 100%;
+  height: 300px;
+  background-color: white;
+  right: -25%;
+  top: 20px;
+}
+
+.game-item:after {
+  content: "";
+  display: block;
+  position: absolute;
+  border-radius: 100%;
+  width: 100%;
+  height: 300px;
+  background-color: rgb(57, 27, 112);
+  left: -25%;
+  top: -240px;
+  clip-path: ellipse(100% 15% at -15% 100%);
+}
 
 
